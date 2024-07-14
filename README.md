@@ -3,7 +3,7 @@
 <a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA.png' align="right" height="150" /></a>
 <br>
 
-**`HMDA`** : Holistic Multimodel Domain Analysis with Machine Learning
+Holistic Multimodel Domain Analysis with Machine Learning (**HMDA**) — A New Paradigm
 ================================================================
 
 
