@@ -6,6 +6,8 @@
 Holistic Multimodel Domain Analysis with Machine Learning (**HMDA**) — A New Paradigm
 ================================================================
 
+This package provides straightforward functions and procedures to utilize holistic multimodel domain analysis, where the relationship of a complex system with a specific mental health outcome is explored. The development code of this package will be published in the coming months (as soon as I find the time to document it!). 
+
 
 
 
