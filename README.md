@@ -35,6 +35,7 @@ HMDA overcomes these limitations by integrating results across multiple strong m
 Machine learning methods are increasingly used in health research to classify or predict outcomes. Compared to many traditional statistical methods, ML approaches offer some advantages (e.g., impose fewer assumptions, handle a variety of feature types regardless of their distributions, and can benefit from a large number of features simultaniously). Despite these advantages, standard ML practices often focus on identifying __a single “best” mode__, based on one performance metric. __This procedure becomes inefficient, especially when the purpose of the research is exploratory, aiming to reflect on important indicators, rather than making a classification or a prediction__. When the purpose is exploratory, what is desired is robustness of the findings, their stability, reproducibility, and replicability. If ML is used to reflect on important domains or indicators related to a particular outcome, it is important to be able ensure what is reported as "important" is actually reliable and to do so, __we need an understanding of disagreements between ML models, rather than solely reporting opinions obtained from the "best" model__. 
 
 Consider the following 3-dimensional hypertuning space, which trains machine learning models for three hyperparameters. You can see that in such a grid, there will be multiple models with very close performance, yet, very different hyperparameters, which are not necessarily located in the same neighborhood. Diversity of the hyperparameters also hints that the logic of the resulting model can be very different from other models and hence, such models may have different opinions about the importance of features in the training dataset. 
+
 <a href="https://github.com/haghish/HMDA"><img src='man/figures/cube.png' align="center" height="450" /></a>
 
 There are many occasions where the traditional paradigm in ML can be problematic:
@@ -67,7 +68,9 @@ Holistic Multimodel Domain Analysis addresses these issues by combining judgemen
    HMDA’s 95% confidence intervals reflect between-model variability. Features with wide intervals may be less stable across models—even if each model individually appears strong—whereas features with narrower intervals demonstrate consistent influence across models.
 
 5. **Holistic Validity Checking**  
-   By incorporating many features from diverse domains (e.g., biological, psychological, social), HMDA can facilitate discussion about whether existing theories accurately capture mental health constructs, or whether additional “neglected” domains might be relevant.
+   By incorporating many features from diverse domains (e.g., biological, psychological, social), HMDA can facilitate discussion about whether existing theories accurately capture mental health constructs, or whether additional “neglected” domains might be relevant. The figure below summarizes that how HMDA may be able to throw some light on conceptual and theoretical debates by taking multiple domains into consideration, making no preselection of variables in the data, and assessing the importance of different domains relative to one another. 
+
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA_process.png' align="center" height="450" /></a>
 
 ---
 
