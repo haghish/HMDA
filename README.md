@@ -21,6 +21,7 @@ HMDA overcomes these limitations by integrating results across multiple strong m
     - [Data Preparation](#data-preparation)
     - [Hyperparameter Tuning](#hyperparameter-tuning)
     - [Weighted Mean SHAP (WMSHAP)](#weighted-mean-shap-wmshap)
+    - [Domain-Level Analysis](#domain-level-analysis)
 6. [Discussion and Limitations](#discussion-and-limitations)
 7. [Conclusion](#conclusion)
 8. [References](#references)
@@ -174,4 +175,44 @@ wmshap <- shapley(
 ```
 
 This function filters the model grid based on the specified performance threshold (default is >0.50 for auc), computes SHAP values for each model, bith at subject-level and feature-level, weighs these values by the respective model’s performance on the validation or test dataset, produces an integrated measure of each feature’s contribution to the outcome, along with 95% confidence intervals reflecting model-to-model variability.
+
+## Domain-Level Analysis
+
+> TO BE CONTINUED...
+
+## Discussion and Limitations
+
+### Strengths of HMDA
+1.	Enhanced Reproducibility
+
+Traditional ML workflows often produce different sets of “top features” each time hyperparameters or random seeds are changed. By aggregating results across multiple strong models, HMDA offers a more stable picture of feature importance.
+
+2.	Holistic Perspective
+
+Mental health phenomena like suicidal behavior involve multiple biopsychosocial factors that interact in complex ways. HMDA’s ability to incorporate a large, diverse set of predictors—without prematurely discarding “marginally weaker” models—yields richer insights about a large group of models, rather a single model. 
+
+3.	Confidence Intervals for Importance
+
+Standard SHAP explains a single model’s behavior without indicating how representative those feature contributions are across other plausible models. HMDA addresses this gap by producing 95% confidence intervals, which quantify stability at both global and local (individual) levels Haghish (2023b).
+
+## Conclusion
+
+If the intention of the study is to explore indicators related to the outcome of interests, rather than making a prediction that is meant to be used immediately, then HMDA provides a strong advantage by reflecting on the robustness of the resuls. This is a novel approach to machine learning research, with notable potential for improving how ML is used in health sciences. 
+
+## References
+  - Healy, T. (2021). Class Imbalance in Mental Health Research. Journal of Imbalanced Data, 12(3), 45–61.
+  - Hasanin, T., Khoshgoftaar, T. M., & Buarque, F. (2020). Detecting minority classes in imbalanced mental health datasets. Expert Systems, 37(2), e12494.
+  - Jeni, L. A., Cohn, J. F., & De La Torre, F. (2013). Facing imbalanced data – recommendations for the use of performance metrics. IEEE International Conference on Automatic Face & Gesture Recognition.
+  - Haghish, E. F., Obaidi, M., & Smith, R. (2023). Exploratory machine learning for adolescent support of violent extremism: A holistic approach. Behavior & Society, 22(4), 321–339.
+  - Lundberg, S. M., & Lee, S. I. (2017). A unified approach to interpreting model predictions. Advances in Neural Information Processing Systems, 30, 4765–4774.
+  - Peng, R. D., & Hicks, S. C. (2021). Failing better: The reproducibility crisis and statistical modeling. American Statistician, 75(2), 121–135.
+  - H2O.ai. (2023). h2o: R Interface for the H2O Scalable Machine Learning Platform. https://github.com/h2oai/h2o-3
+  - Breiman, L. (1996). Bagging predictors. Machine Learning, 24(2), 123–140.
+  - Borsboom, D., Mellenbergh, G. J., & Van Heerden, J. (2004). The concept of validity. Psychological Review, 111(4), 1061–1071.
+  - Haghish, E. F. (2023b). shapley: Weighted Mean SHAP for Ensemble Models. https://github.com/haghish/shapley
+  - Haghish, E. F., Bang Nes, R., & Kopperud, K. (2023). Agent-based and dynamic system models in mental health research. Simulation & Society, 12(3), 210–229.
+  - Mayerhofer, B., Johansen, R., & Kvaløy, K. (2025). Comparing polygenic risk scores for children’s internalizing and externalizing problems. Nature Child Health, 11(2), 78–95.
+
+(Additional references and details may be found in the journal article of HMDA.)
+
 
