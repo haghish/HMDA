@@ -61,16 +61,19 @@ Holistic Multimodel Domain Analysis addresses these issues by combining judgemen
 2. **Weighted Mean SHAP (WMSHAP)**  
    [SHapley Additive exPlanations (SHAP)](#ref-LundbergLee2017) estimate each feature’s marginal contribution. HMDA uses __[shapley](https://github.com/haghish/shapley)__ refines SHAP by weighting each model’s feature-importance scores by the model’s predictive performance (e.g., accuracy, AUC). This generates confidence intervals around *ensemble-level* importance estimates.
 
-3. **Domain Analysis**  
+The WMSHAP values are computed with the __[shapley](https://github.com/haghish/shapley)__ algorithm:
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/shapley_algorithm.png' align="center" height="400" /></a>
+
+4. **Domain Analysis**  
    HMDA allows researchers to group conceptually related variables into “domains” (factors or groups of factors). Summing SHAP contributions within these domains can identify broader patterns and highlight the most crucial theoretical constructs. 
 
-4. **Cross-Model Stability**  
+5. **Cross-Model Stability**  
    HMDA’s 95% confidence intervals reflect between-model variability. Features with wide intervals may be less stable across models—even if each model individually appears strong—whereas features with narrower intervals demonstrate consistent influence across models.
 
-5. **Holistic Validity Checking**  
+6. **Holistic Validity Checking**  
    By incorporating many features from diverse domains (e.g., biological, psychological, social), HMDA can facilitate discussion about whether existing theories accurately capture mental health constructs, or whether additional “neglected” domains might be relevant. The figure below summarizes that how HMDA may be able to throw some light on conceptual and theoretical debates by taking multiple domains into consideration, making no preselection of variables in the data, and assessing the importance of different domains relative to one another. 
 
-<a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA_process.png' align="center" height="450" /></a>
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA_process.png' align="center" height="550" /></a>
 
 ---
 
