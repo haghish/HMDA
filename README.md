@@ -74,7 +74,7 @@ The WMSHAP values are computed with the __[shapley](https://github.com/haghish/s
 6. **Holistic Validity Checking**  
    By incorporating many features from diverse domains (e.g., biological, psychological, social), HMDA can facilitate discussion about whether existing theories accurately capture mental health constructs, or whether additional “neglected” domains might be relevant. The figure below summarizes that how HMDA may be able to throw some light on conceptual and theoretical debates by taking multiple domains into consideration, making no preselection of variables in the data, and assessing the importance of different domains relative to one another. 
 
-<a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA_process.png' align="center" height="550" /></a>
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA_process.png' align="center" height="500" /></a>
 
 ---
 
