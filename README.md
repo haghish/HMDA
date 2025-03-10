@@ -3,7 +3,7 @@
 <a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA.png' align="right" height="150" /></a>
 
 
-Holistic Multimodel Domain Analysis (**HMDA**) — A New Paradigm for Exploratory Machine Learning
+Holistic Multimodel Domain Analysis (**HMDA**) — A Paradigm for Exploratory Machine Learning
 ================================================================
 
 Holistic Multimodel Domain Analysis (HMDA) is a new paradigm for exploratory machine learning research, with notable potential applications in mental health and well-being research. Traditional ML analyses typically focus on finding a single "best" model based on performance metrics such as accuracy or the area under the curve (AUC). While this approach can be effective for certain predictive tasks, it can also mask important disagreements among other high-performing models, and overlook the broader, more nuanced associations that might exist in a dataset. In exploratory research, such disagreements are important and should be taken into consideration, rather than making a single-minded inference regarding the "best" model with a negligible performance difference. 
