@@ -32,7 +32,13 @@ HMDA overcomes these limitations by integrating results across multiple strong m
 
 ### Machine Learning in Mental Health Research
 
-Machine learning methods are increasingly used in health research to classify or predict outcomes. Compared to many traditional statistical methods, ML approaches offer some advantages (e.g., impose fewer assumptions, handle a variety of feature types regardless of their distributions, and can benefit from a large number of features simultaniously). Despite these advantages, standard ML practices often focus on identifying __a single “best” mode__, based on one performance metric. __This procedure becomes inefficient, especially when the purpose of the research is exploratory, aiming to reflect on important indicators, rather than making a classification or a prediction__. When the purpose is exploratory, what is desired is robustness of the findings, their stability, reproducibility, and replicability. If ML is used to reflect on important domains or indicators related to a particular outcome, it is important to be able ensure what is reported as "important" is actually reliable and to do so, __we need an understanding of disagreements between ML models, rather than solely reporting opinions obtained from the "best" model__. There are many occasions where the traditional paradigm in ML can be problematic:
+Machine learning methods are increasingly used in health research to classify or predict outcomes. Compared to many traditional statistical methods, ML approaches offer some advantages (e.g., impose fewer assumptions, handle a variety of feature types regardless of their distributions, and can benefit from a large number of features simultaniously). Despite these advantages, standard ML practices often focus on identifying __a single “best” mode__, based on one performance metric. __This procedure becomes inefficient, especially when the purpose of the research is exploratory, aiming to reflect on important indicators, rather than making a classification or a prediction__. When the purpose is exploratory, what is desired is robustness of the findings, their stability, reproducibility, and replicability. If ML is used to reflect on important domains or indicators related to a particular outcome, it is important to be able ensure what is reported as "important" is actually reliable and to do so, __we need an understanding of disagreements between ML models, rather than solely reporting opinions obtained from the "best" model__. 
+
+Consider the following 3-dimensional hypertuning space, which trains machine learning models for three hyperparameters. You can see that in such a grid, there will be multiple models with very close performance, yet, very different hyperparameters, which are not necessarily located in the same neighborhood. Diversity of the hyperparameters also hints that the logic of the resulting model can be very different from other models and hence, such models may have different opinions about the importance of features in the training dataset. 
+
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/cube.png' align="center" height="450" /></a>
+
+There are many occasions where the traditional paradigm in ML can be problematic:
 
 1. **Model Selection Under Class Imbalance**  
    Mental health research commonly deals with outcomes that have low prevalence in the population. Low-prevalence outcomes (e.g., suicidal behavior) introduce severe class imbalance, which complicates the process of model training, model evaluation, choice of performance metrics, and even model selection [Healy (2021)](#ref-Healy2021), [Hasanin et al. (2020)](#ref-Hasanin2020). This is a serious problem that has been neglected in machine learning applications in health research. 
@@ -55,14 +61,20 @@ Holistic Multimodel Domain Analysis addresses these issues by combining judgemen
 2. **Weighted Mean SHAP (WMSHAP)**  
    [SHapley Additive exPlanations (SHAP)](#ref-LundbergLee2017) estimate each feature’s marginal contribution. HMDA uses __[shapley](https://github.com/haghish/shapley)__ refines SHAP by weighting each model’s feature-importance scores by the model’s predictive performance (e.g., accuracy, AUC). This generates confidence intervals around *ensemble-level* importance estimates.
 
-3. **Domain Analysis**  
+The WMSHAP values are computed with the __[shapley](https://github.com/haghish/shapley)__ algorithm:
+
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/shapley_algorithm.png' align="center" height="400" /></a>
+
+4. **Domain Analysis**  
    HMDA allows researchers to group conceptually related variables into “domains” (factors or groups of factors). Summing SHAP contributions within these domains can identify broader patterns and highlight the most crucial theoretical constructs. 
 
-4. **Cross-Model Stability**  
+5. **Cross-Model Stability**  
    HMDA’s 95% confidence intervals reflect between-model variability. Features with wide intervals may be less stable across models—even if each model individually appears strong—whereas features with narrower intervals demonstrate consistent influence across models.
 
-5. **Holistic Validity Checking**  
-   By incorporating many features from diverse domains (e.g., biological, psychological, social), HMDA can facilitate discussion about whether existing theories accurately capture mental health constructs, or whether additional “neglected” domains might be relevant.
+6. **Holistic Validity Checking**  
+   By incorporating many features from diverse domains (e.g., biological, psychological, social), HMDA can facilitate discussion about whether existing theories accurately capture mental health constructs, or whether additional “neglected” domains might be relevant. The figure below summarizes that how HMDA may be able to throw some light on conceptual and theoretical debates by taking multiple domains into consideration, making no preselection of variables in the data, and assessing the importance of different domains relative to one another. 
+
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA_process.png' align="center" height="550" /></a>
 
 ---
 
