@@ -136,7 +136,7 @@ splt <- hmda.partition(
 
 ### Hyperparameter Tuning
 
-In this example, I use gradient boosting machines (GBMs), which involve parameters like `ntrees`, `max_depth`, `min_rows`, `sample_rate`, and `col_sample_rate_per_tree`. The hmda.grid() function systematically trains a grid of models across a range of hyperparameter combinations:
+In this example, I use gradient boosting machines (GBM), which involve parameters like `ntrees`, `max_depth`, `min_rows`, `sample_rate`, and `col_sample_rate_per_tree`. The hmda.grid() function systematically trains a grid of models across a range of hyperparameter combinations. This code defines a list of hyperparameters (params), launches an grid search for tuning the GBM models, and stores each trained model along with its performance metrics in the working directory under `"./recovery"`. If the training crashes, you'd be able to reload the models and continue from the point the training crashed. 
 
 ```r
 params <- list(
@@ -159,4 +159,19 @@ grid <- hmda.grid(
   recovery_dir = "./recovery"
 )
 ```
+
+## Weighted Mean SHAP (WMSHAP)
+
+After training a large set of models, the next step is to compute Weighted Mean SHAP (WMSHAP) values. Suppose we only include models with an AUC > 0.50 (i.e., non-random classification), which is the default. We can calculate ensemble-level feature importance as follows:
+
+```r
+wmshap <- shapley(
+  models   = grid,
+  newdata  = splt$hmda.test.hex,
+  plot     = FALSE,
+  performance_metric = "auc"
+)
+```
+
+This function filters the model grid based on the specified performance threshold (default is >0.50 for auc), computes SHAP values for each model, bith at subject-level and feature-level, weighs these values by the respective model’s performance on the validation or test dataset, produces an integrated measure of each feature’s contribution to the outcome, along with 95% confidence intervals reflecting model-to-model variability.
 
