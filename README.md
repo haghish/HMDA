@@ -62,6 +62,7 @@ Holistic Multimodel Domain Analysis addresses these issues by combining judgemen
    [SHapley Additive exPlanations (SHAP)](#ref-LundbergLee2017) estimate each feature’s marginal contribution. HMDA uses __[shapley](https://github.com/haghish/shapley)__ refines SHAP by weighting each model’s feature-importance scores by the model’s predictive performance (e.g., accuracy, AUC). This generates confidence intervals around *ensemble-level* importance estimates.
 
 The WMSHAP values are computed with the __[shapley](https://github.com/haghish/shapley)__ algorithm:
+
 <a href="https://github.com/haghish/HMDA"><img src='man/figures/shapley_algorithm.png' align="center" height="400" /></a>
 
 4. **Domain Analysis**  
