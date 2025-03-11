@@ -19,6 +19,12 @@
 #'   for multicore processing.
 #' @param java character. A string specifying the path to the executable 64-bit Java JDK on Microsoft
 #'   Windows machines. If provided, this value will be assigned to the \code{JAVA_HOME} environment variable.
+#' @param ignore_config logical, indicating whether a search for a .h2oconfig file should be conducted or not.
+#'                      Default value is FALSE.
+#' @param bind_to_localhost logical, indicating whether access to the H2O instance
+#'                          should be restricted to the local machine (default) or
+#'                          if it can be reached from other computers on the network.
+#'                          Only applicable when H2O is started from R.
 #' @param ... Additional arguments passed to \code{h2o.init()}.
 #'
 #' @return An object representing the connection to the H2O cluster.
@@ -45,6 +51,8 @@ hmda.init <- function(cpu = -1,
                       ip = "localhost",
                       port = 54321,
                       verbatim = FALSE,
+                      ignore_config=TRUE,
+                      bind_to_localhost=FALSE,
                       ...) {
 
   # If JAVA is provided, add it to the environment
@@ -89,11 +97,11 @@ hmda.init <- function(cpu = -1,
                                          min_mem_size = ram,
                                          ip = ip, port = port,
                                          #max_mem_size = max_mem_size,
-                                         #ignore_config = ignore_config,
+                                         ignore_config = ignore_config,
                                          insecure = TRUE,
                                          https = FALSE,
                                          #log_level = if (debug) "DEBUG" else "FATA",
-                                         bind_to_localhost = FALSE,
+                                         bind_to_localhost = bind_to_localhost,
                                          ...)),
              error = function(cond) {
                message("connection to JAVA server failed...\n");
