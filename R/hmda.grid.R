@@ -38,6 +38,9 @@ hmda.grid <- function(algorithm = c("randomForest", "drf",  "gbm", "xrf", "isola
                       # recovery and saving
                       recovery_dir = NULL,
 
+                      # returning the grid
+                      sort_by = "logloss",
+
                       ...) {
 
 
@@ -94,7 +97,7 @@ hmda.grid <- function(algorithm = c("randomForest", "drf",  "gbm", "xrf", "isola
 
   # Get the IDs
   # ============================================================
-  MODELIDS <- unlist(grid@model_ids)
+  #MODELIDS <- unlist(grid@model_ids)
 
-  return(MODELIDS)
+  return(grid)
 }
