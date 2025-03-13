@@ -11,6 +11,8 @@ hmda.init(
   ip = "localhost",
   port = 54321,
   verbatim = FALSE,
+  ignore_config = TRUE,
+  bind_to_localhost = FALSE,
   ...
 )
 }
@@ -28,6 +30,14 @@ Windows machines. If provided, this value will be assigned to the \code{JAVA_HOM
 \item{ip}{character. The IP address of the H2O server. Default is \code{"localhost"}.}
 
 \item{port}{integer. The port number on which the H2O server listens. Default is \code{54321}.}
+
+\item{ignore_config}{logical, indicating whether a search for a .h2oconfig file should be conducted or not.
+Default value is FALSE.}
+
+\item{bind_to_localhost}{logical, indicating whether access to the H2O instance
+should be restricted to the local machine (default) or
+if it can be reached from other computers on the network.
+Only applicable when H2O is started from R.}
 
 \item{...}{Additional arguments passed to \code{h2o.init()}.}
 }
