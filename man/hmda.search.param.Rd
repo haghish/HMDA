@@ -6,7 +6,7 @@
 \usage{
 hmda.search.param(
   algorithm = c("drf", "gbm"),
-  rank = "logloss",
+  sort_by = "logloss",
   x,
   y,
   training_frame = h2o.getFrame("hmda.train.hex"),
@@ -30,7 +30,7 @@ random search. Supported values include "drf" (Distributed
 Random Forest) and "gbm" (Gradient Boosting Machine).
 The input is case-insensitive.}
 
-\item{rank}{Character string specifying the metric used to rank
+\item{sort_by}{Character string specifying the metric used to rank
 models. For metrics not in \code{"logloss",
 "mean_per_class_error", "rmse", "mse"}, lower values
 indicate better performance; for these four metrics,
@@ -119,7 +119,7 @@ algorithm. It then extracts the leaderboard from the H2OAutoML object and
 retrieves detailed hyperparameter information for each model using \code{automlModelParam()} from the
 h2otools package. The leaderboard and hyperparameter data are merged by the
 \code{model_id} column. Sorting of the merged results is performed based on
-the \code{rank} metric. For metrics not in
+the \code{sort_by} metric. For metrics not in
 \code{"logloss", "mean_per_class_error", "rmse", "mse"}, lower values are
 considered better; for these four metrics, higher values are preferred.
 
