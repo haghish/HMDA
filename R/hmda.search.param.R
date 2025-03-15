@@ -19,7 +19,7 @@
 #'                   random search. Supported values include "drf" (Distributed
 #'                   Random Forest) and "gbm" (Gradient Boosting Machine).
 #'                   The input is case-insensitive.
-#' @param rank       Character string specifying the metric used to rank
+#' @param sort_by    Character string specifying the metric used to rank
 #'                   models. For metrics not in \code{"logloss",
 #'                   "mean_per_class_error", "rmse", "mse"}, lower values
 #'                   indicate better performance; for these four metrics,
@@ -75,7 +75,7 @@
 #' retrieves detailed hyperparameter information for each model using \code{automlModelParam()} from the
 #' h2otools package. The leaderboard and hyperparameter data are merged by the
 #' \code{model_id} column. Sorting of the merged results is performed based on
-#' the \code{rank} metric. For metrics not in
+#' the \code{sort_by} metric. For metrics not in
 #' \code{"logloss", "mean_per_class_error", "rmse", "mse"}, lower values are
 #' considered better; for these four metrics, higher values are preferred.
 #'
@@ -139,7 +139,7 @@
 #'
 #' @export
 hmda.search.param <- function(algorithm = c("drf", "gbm"),
-                              rank = "logloss",
+                              sort_by = "logloss",
                               x,
                               y,
                               training_frame = h2o.getFrame("hmda.train.hex"),
@@ -200,10 +200,10 @@ hmda.search.param <- function(algorithm = c("drf", "gbm"),
   # ensuring that new columns are added if models contain additional parameters.
   # ==================================================
   merged <- merge(leaderboard, hyperparameters, by = "model_id", all = TRUE)
-  if (!rank %in% c("logloss", "mean_per_class_error", "rmse", "mse")) {
-    merged <- merged[order(merged[, rank], decreasing = TRUE), ]
+  if (!sort_by %in% c("logloss", "mean_per_class_error", "rmse", "mse")) {
+    merged <- merged[order(merged[, sort_by], decreasing = TRUE), ]
   } else {
-    merged <- merged[order(merged[, rank], decreasing = FALSE), ]
+    merged <- merged[order(merged[, sort_by], decreasing = FALSE), ]
   }
 
   # Select the hyperparameters that meet the min rank
@@ -226,7 +226,7 @@ hmda.search.param <- function(algorithm = c("drf", "gbm"),
     hyperparameters_all = all
   )
 
-  class(results) <- "hmda.search.param"
+  class(results) <- c("hmda.search.param", "list")
 
   return(results)
 }
