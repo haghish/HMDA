@@ -1,4 +1,57 @@
-
+#' Capture Evaluation Side Effects
+#'
+#' This function evaluates an R expression while capturing its printed output,
+#' messages, warnings, and errors. It returns a list containing the result of
+#' the evaluation along with all the captured texts.
+#'
+#' @param expr An R expression to evaluate. The expression is captured using
+#'   \code{substitute()} to retain its code form before evaluation.
+#'
+#' @return A list with the following components:
+#' \describe{
+#'   \item{value}{The result of evaluating \code{expr}.}
+#'   \item{output}{A character vector with the printed output produced during evaluation.}
+#'   \item{messages}{A character vector with any messages generated during evaluation.}
+#'   \item{warnings}{A character vector with any warnings produced during evaluation.}
+#'   \item{error}{A character string with the error message if an error occurred; otherwise \code{NULL}.}
+#' }
+#'
+#' @details
+#' The function uses \code{withCallingHandlers()} and \code{tryCatch()} to capture
+#' side effects of evaluating the expression. Printed output is captured using
+#' \code{capture.output()}. Warnings and messages are intercepted and their default
+#' display is suppressed using \code{invokeRestart("muffleWarning")} and
+#' \code{invokeRestart("muffleMessage")}, respectively. If an error occurs, its
+#' message is stored and \code{NULL} is returned as the value.
+#'
+#' @importFrom utils capture.output
+# @importFrom base substitute
+# @importFrom base withCallingHandlers
+# @importFrom base tryCatch
+# @importFrom base conditionMessage
+# @importFrom base eval
+# @importFrom base parent.frame
+# @importFrom base invokeRestart
+#'
+#' @examples
+#' \dontrun{
+#'   # Example: Capturing output, messages, warnings, and errors
+#'   captured <- capture({
+#'     print("Hello, world!")
+#'     message("This is a message.")
+#'     warning("This is a warning.")
+#'     42  # Final value returned
+#'   })
+#'
+#'   # Display the captured components
+#'   print(captured$output)    # Printed output
+#'   print(captured$messages)   # Messages
+#'   print(captured$warnings)   # Warnings
+#'   print(captured$error)      # Error message (if any)
+#'   print(captured$value)      # The evaluated result (42 in this example)
+#' }
+#'
+#' @export
 
 capture <- function(expr) {
   # Capture the expression as code
@@ -50,10 +103,4 @@ capture <- function(expr) {
 #   warning("This is a warning.")
 #   cat(42)  # final value returned
 # })
-#
-# # To print the captured output:
-# print(captured$output)
-# print(captured$messages)
-# print(captured$warnings)
-# print(captured$error)
-# print(captured$value)
+
