@@ -1,9 +1,64 @@
-
+#' @title Check Exploratory Factor Analysis Suitability
+#' @description Checks if specified features in a dataframe meet criteria for performing exploratory factor analysis (EFA).
+#' This function verifies that each feature exists, is numeric, has sufficient variability,
+#' and does not have an excessive proportion of missing values. For multiple features, it also
+#' assesses the full rank of the correlation matrix and the level of intercorrelation among features.
+#' @author E. F. Haghish
+#'
+#' @param df A dataframe containing the features.
+#' @param features A character vector of feature names to be evaluated.
+#' @param min_unique An integer specifying the minimum number of unique non-missing
+#'   values required for a feature. Default is 5.
+#' @param min_intercorrelation A numeric threshold for the minimum acceptable
+#'   intercorrelation among features. (Note: this parameter is not used explicitly in the current implementation.) Default is 0.3.
+#' @param verbatim Logical; if \code{TRUE}, a confirmation message is printed when all
+#'   features appear suitable. Default is \code{FALSE}.
+#'
+#' @return \code{TRUE} if all features are deemed suitable for EFA, and \code{FALSE}
+#'   otherwise. In the latter case, messages detailing the issues are printed.
+#'
+#' @details
+#' The function performs several checks:
+#' \describe{
+#'   \item{Existence}{Verifies that each feature in \code{features} is present in \code{df}.}
+#'   \item{Numeric Type}{Checks that each feature is numeric.}
+#'   \item{Variability}{Ensures that each feature has at least \code{min_unique} unique non-missing values.}
+#'   \item{Missing Values}{Flags features with more than 20\% missing values.}
+#' }
+#'
+#' If more than one feature is provided, the function computes the correlation matrix
+#' (using pairwise complete observations) and checks:
+#' \describe{
+#'   \item{Full Rank}{Whether the correlation matrix is full rank. A rank lower than the
+#'     number of features indicates redundancy.}
+#'   \item{Intercorrelations}{Identifies features that do not have any correlation (>= 0.4)
+#'     with the other features.}
+#' }
+#'
+#' @importFrom stats na.omit cor
+#'
+#' @examples
+#' \dontrun{
+#'   # Example: assess feature suitability for EFA using the USJudgeRatings dataset.
+#'   # this dataset contains ratings on several aspects of U.S. federal judges' performance.
+#'   # Here, we check whether these rating variables are suitable for EFA.
+#'   data("USJudgeRatings")
+#'   features_to_check <- colnames(USJudgeRatings[,-1])
+#'   result <- check_efa(
+#'     df = USJudgeRatings,
+#'     features = features_to_check,
+#'     min_unique = 3,
+#'     verbatim = TRUE
+#'   )
+#'
+#'   # TRUE indicates the features are suitable.
+#'   print(result)
+#' }
+#'
 #' @export
-
 check_efa <- function(df,
                       features,
-                      min_unique = 4,
+                      min_unique = 5,
                       min_intercorrelation = .3,
                       verbatim = FALSE) {
 
@@ -104,8 +159,3 @@ check_efa <- function(df,
     return(TRUE)
   }
 }
-
-# Example usage:
-
-#importantFeatures <- importantFeatures[importantFeatures %in% colnames(mlim)]
-# check_efa(na.omit(raw), importantFeatures)
