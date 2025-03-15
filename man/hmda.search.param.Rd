@@ -12,7 +12,7 @@ hmda.search.param(
   training_frame = h2o.getFrame("hmda.train.hex"),
   validation_frame = NULL,
   max_models = 100,
-  fold_assignment = "Modulo",
+  max_runtime_secs = 3600,
   nfolds = 10,
   seed = NULL,
   fold_column = NULL,
@@ -49,8 +49,8 @@ Default is \code{NULL}.}
 \item{max_models}{Integer. Maximum number of models to build.
 Default is 100.}
 
-\item{fold_assignment}{Character. Method for assigning folds in
-cross-validation. Default is "Modulo".}
+\item{max_runtime_secs}{integer. Amount of time (in seconds) that the model
+should keep searching. Default is 3600.}
 
 \item{nfolds}{Integer. Number of folds for cross-validation.
 Default is 10.}
@@ -131,27 +131,40 @@ hyperparameter search:
   \item \strong{Top 2}: Gathers hyperparameter settings from the top 2 models.
   \item \strong{Top 5 and Top 10}: Similarly, collects hyperparameter settings
         from the top 5 and top 10 models, respectively.
+  \item \strong{All}: List all the hyperparameters that were tried
 }
 These strategies provide different levels of granularity for analyzing the
 hyperparameter space and can be used for prototyping and further manual tuning.
 }
 \examples{
 \dontrun{
-  # Initialize H2O (if not already running)
-  library(h2o)
-  h2o.init()
+  # NOTE: This example may take a long time to run on your machine
 
-  # Define predictors and response
-  predictors <- c("var1", "var2", "var3")
-  response <- "target"
+  # Initialize H2O (if not already running)
+  library(HMDA)
+  hmda.init()
+
+  # Import a sample binary outcome train/test set into H2O
+  train <- h2o.importFile(
+  "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_train_10k.csv")
+  test <- h2o.importFile(
+  "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_test_5k.csv")
+
+  # Identify predictors and response
+  y <- "response"
+  x <- setdiff(names(train), y)
+
+  # For binary classification, response should be a factor
+  train[, y] <- as.factor(train[, y])
+  test[, y] <- as.factor(test[, y])
 
   # Run the hyperparameter search using DRF and GBM algorithms.
-  result <- hmda.search.param(algorithm = c("drf"),
-                              x = predictors,
-                              y = response,
-                              training_frame = h2o.getFrame("hmda.train.hex"),
-                              max_models = 50,
-                              nfolds = 5,
+  result <- hmda.search.param(algorithm = c("gbm"),
+                              x = x,
+                              y = y,
+                              training_frame = train,
+                              max_models = 100,
+                              nfolds = 10,
                               stopping_metric = "AUC",
                               stopping_rounds = 3)
 
