@@ -2,7 +2,8 @@
 % Please edit documentation in R/hmda.init.R
 \name{hmda.init}
 \alias{hmda.init}
-\title{Initialize or Restart H2O Cluster for HMDA Analysis}
+\title{Initialize or Restart H2O Cluster for HMDA
+       Analysis}
 \usage{
 hmda.init(
   cpu = -1,
@@ -11,60 +12,83 @@ hmda.init(
   ip = "localhost",
   port = 54321,
   verbatim = FALSE,
+  restart = TRUE,
+  shutdown = FALSE,
   ignore_config = TRUE,
   bind_to_localhost = FALSE,
   ...
 )
 }
 \arguments{
-\item{cpu}{integer. The number of CPUs to dedicate for HMDA analysis. The default value of \code{-1}
-uses all available CPUs.}
+\item{cpu}{integer. The number of CPU threads to use.
+-1 indicates all available threads. Default is -1.}
 
-\item{ram}{integer. Specifies the maximum memory allocation in Gigabytes for the H2O cluster.
-By default, all available memory is used. A larger memory allocation is recommended, especially
-for multicore processing.}
+\item{ram}{numeric. Minimum memory (in GB) for the cluster.
+If NULL, all available memory is used.}
 
-\item{java}{character. A string specifying the path to the executable 64-bit Java JDK on Microsoft
-Windows machines. If provided, this value will be assigned to the \code{JAVA_HOME} environment variable.}
+\item{java}{character. Path to the Java JDK. If provided, sets
+JAVA_HOME accordingly.}
 
-\item{ip}{character. The IP address of the H2O server. Default is \code{"localhost"}.}
+\item{ip}{character. The IP address for the H2O server.
+Default is "localhost".}
 
-\item{port}{integer. The port number on which the H2O server listens. Default is \code{54321}.}
+\item{port}{integer. The port for the H2O server.
+Default is 54321.}
 
-\item{ignore_config}{logical, indicating whether a search for a .h2oconfig file should be conducted or not.
-Default value is FALSE.}
+\item{verbatim}{logical. If TRUE, prints detailed cluster info.
+Default is FALSE.}
 
-\item{bind_to_localhost}{logical, indicating whether access to the H2O instance
-should be restricted to the local machine (default) or
-if it can be reached from other computers on the network.
-Only applicable when H2O is started from R.}
+\item{restart}{logical. if TRUE, the server is erased and restarted}
 
-\item{...}{Additional arguments passed to \code{h2o.init()}.}
+\item{shutdown}{logical. if TRUE, the server is closed}
+
+\item{ignore_config}{logical. If TRUE, ignores any existing H2O
+configuration. Default is TRUE.}
+
+\item{bind_to_localhost}{logical. If TRUE, restricts access to the
+cluster to the local machine. Default is FALSE.}
+
+\item{...}{Additional arguments passed to h2o.init().}
 }
 \value{
-An object representing the connection to the H2O cluster.
+An object representing the connection to the H2O
+        cluster.
 }
 \description{
-This function initializes an H2O cluster named \code{"HMDA"},
-used for Holistic Multi-Model Domain Analysis (HMDA). It wraps
-around \code{h2o.init()} and attempts to establish a connection to the H2O Java server using
-the specified resource parameters. If a custom Java path is provided, the function sets the
-\code{JAVA_HOME} environment variable accordingly. It retries starting the H2O
-server up to 10 times until a connection is established.
-If an H2O cluster is already running, this function will restart the cluster.
-For further details on initialization parameters, refer to the H2O documentation:
-\url{https://www.rdocumentation.org/packages/h2o/versions/2.4.3.11/topics/h2o.init}.
+Initializes or restarts an H2O cluster configured for
+       Holistic Multimodel Domain Analysis. It sets up the cluster
+       with specified CPU threads, memory, and connection settings.
+       It first checks for an existing cluster, shuts it down if
+       found, and then repeatedly attempts to establish a new
+       connection, retrying up to 10 times if necessary.
+}
+\details{
+The function sets JAVA_HOME if a Java path is provided.
+        It checks for an existing cluster via h2o.clusterInfo().
+        If found, the cluster is shut down and the function waits
+        5 seconds. It then attempts to initialize a new cluster using
+        h2o.init() with the specified settings. On failure, it retries
+        every 3 seconds, up to 10 attempts. If all attempts fail, an
+        error is thrown.
 }
 \examples{
 \dontrun{
-  # Example 1: Initialize the H2O cluster using all available resources.
+  # Example 1: Initialize the H2O cluster with default settings.
+  library(hmda)
   hmda.init()
-  h2o.clusterInfo() #check the status of the cluster with H2O
 
-  # Example 2: Initialize the H2O cluster with specific settings for HMDA analysis:
-  # Use 4 CPUs, allocate 8 GB of memory, set a minimum of 4 GB, and specify a custom JAVA path.
-  conn <- hmda.init(ip = "localhost", port = 54321, cpu = 4, ram = 8, min_mem_size = 4,
-                    java = "C:/Program Files/Java/jdk1.8.0_241")
+  # Example 2: Initialize with specific settings such as Java path.
+  conn <- hmda.init(
+      cpu = 4,
+      ram = 8,
+      java = "/path/to/java",     #e.g., "C:/Program Files/Java/jdk1.8.0_241"
+      ip = "localhost",
+      port = 54321,
+      verbatim = TRUE
+  )
+
+  # check the status of the h2o connection
+  h2o::h2o.clusterInfo(conn) #you can use h2o functions to interact with the server
 }
 
 }
