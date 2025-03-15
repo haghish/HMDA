@@ -36,7 +36,7 @@ Machine learning methods are increasingly used in health research to classify or
 
 Consider the following 3-dimensional hypertuning space, which trains machine learning models for three hyperparameters. You can see that in such a grid, there will be multiple models with very close performance, yet, very different hyperparameters, which are not necessarily located in the same neighborhood. Diversity of the hyperparameters also hints that the logic of the resulting model can be very different from other models and hence, such models may have different opinions about the importance of features in the training dataset. 
 
-<a href="https://github.com/haghish/HMDA"><img src='man/figures/cube.png' align="center" height="450" /></a>
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/cube.jpg' align="center" height="450" /></a>
 
 There are many occasions where the traditional paradigm in ML can be problematic:
 
@@ -63,7 +63,7 @@ Holistic Multimodel Domain Analysis addresses these issues by combining judgemen
 
 The WMSHAP values are computed with the __[shapley](https://github.com/haghish/shapley)__ algorithm:
 
-<a href="https://github.com/haghish/HMDA"><img src='man/figures/shapley_algorithm.png' align="center" height="400" /></a>
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/shapley_algorithm.jpg' align="center" height="400" /></a>
 
 4. **Domain Analysis**  
    HMDA allows researchers to group conceptually related variables into “domains” (factors or groups of factors). Summing SHAP contributions within these domains can identify broader patterns and highlight the most crucial theoretical constructs. 
@@ -74,7 +74,7 @@ The WMSHAP values are computed with the __[shapley](https://github.com/haghish/s
 6. **Holistic Validity Checking**  
    By incorporating many features from diverse domains (e.g., biological, psychological, social), HMDA can facilitate discussion about whether existing theories accurately capture mental health constructs, or whether additional “neglected” domains might be relevant. The figure below summarizes that how HMDA may be able to throw some light on conceptual and theoretical debates by taking multiple domains into consideration, making no preselection of variables in the data, and assessing the importance of different domains relative to one another. 
 
-<a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA_process.png' align="center" height="500" /></a>
+<a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA_process.jpg' align="center" height="500" /></a>
 
 ---
 
