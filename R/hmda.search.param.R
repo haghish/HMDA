@@ -34,8 +34,6 @@
 #'                   Default is 100.
 #' @param max_runtime_secs integer. Amount of time (in seconds) that the model
 #'                   should keep searching. Default is 3600.
-#' @param fold_assignment Character. Method for assigning folds in
-#'                   cross-validation. Default is "Modulo".
 #' @param nfolds     Integer. Number of folds for cross-validation.
 #'                   Default is 10.
 #' @param seed       Integer. A seed for reproducibility.
@@ -109,8 +107,10 @@
 #'   hmda.init()
 #'
 #'   # Import a sample binary outcome train/test set into H2O
-#'   train <- h2o.importFile("https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_train_10k.csv")
-#'   test <- h2o.importFile("https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_test_5k.csv")
+#'   train <- h2o.importFile(
+#'   "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_train_10k.csv")
+#'   test <- h2o.importFile(
+#'   "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_test_5k.csv")
 #'
 #'   # Identify predictors and response
 #'   y <- "response"
@@ -177,7 +177,11 @@ hmda.search.param <- function(algorithm = c("drf", "gbm"),
                        stopping_rounds = stopping_rounds,
                        stopping_metric = stopping_metric,
                        stopping_tolerance = stopping_tolerance,
+                       project_name = "hmda.search.param",
                        ... )
+
+  #### FOR DEBUGGING
+  ### search <- h2o.get_automl("hmda.search.param")
 
   # Get the leaderboard dataset as a data frame
   leaderboard <- as.data.frame(search@leaderboard)
@@ -197,18 +201,18 @@ hmda.search.param <- function(algorithm = c("drf", "gbm"),
   # ==================================================
   merged <- merge(leaderboard, hyperparameters, by = "model_id", all = TRUE)
   if (!rank %in% c("logloss", "mean_per_class_error", "rmse", "mse")) {
-    merged <- merged[order(merged[, rank], decreasing = FALSE), ]
-  } else {
     merged <- merged[order(merged[, rank], decreasing = TRUE), ]
+  } else {
+    merged <- merged[order(merged[, rank], decreasing = FALSE), ]
   }
 
   # Select the hyperparameters that meet the min rank
   # ==================================================
-  best_of_family <- best_of_family(merged) # best models according to different metrics
-  top2  <- list_hyperparameter(merged[merged[1:2, rank] ])
-  top5  <- list_hyperparameter(merged[merged[1:5, rank] ])
-  top10 <- list_hyperparameter(merged[merged[1:10, rank] ])
-  all   <- list_hyperparameter(merged[merged[, rank] ])
+  best_of_family <- list_hyperparameter(merged[best_of_family(merged) %in% merged$model_id, ])
+  top2  <- list_hyperparameter(merged[1:2, ])
+  top5  <- list_hyperparameter(merged[1:5, ])
+  top10 <- list_hyperparameter(merged[1:10,])
+  all   <- list_hyperparameter(merged)
 
   # Return the results as a list
   # ==================================================
@@ -219,7 +223,7 @@ hmda.search.param <- function(algorithm = c("drf", "gbm"),
     hyperparameters_top2 = top2,
     hyperparameters_top5 = top5,
     hyperparameters_top10 = top10,
-    hyperparameters_all = all,
+    hyperparameters_all = all
   )
 
   class(results) <- "hmda.search.param"
