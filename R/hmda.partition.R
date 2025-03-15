@@ -1,81 +1,78 @@
-#' Partition a data frame into training, testing, and (optionally) validation sets
-#' and upload it to H2O local server on your machine
+#' @title Partition Data for HMDA Analysis
+#' @description Partition a data frame into training, testing, and
+#'   optionally validation sets, and upload these sets to a local
+#'   H2O server. If an outcome column \code{y} is provided and is a
+#'   factor or character, stratified splitting is used; otherwise, a
+#'   random split is performed. The proportions must sum to 1.
 #'
-#' This function partitions a data frame into training, testing, and optionally
-#' validation sets. If \code{y} (the name of an outcome column) is provided and
-#' is a factor or character, the function uses stratified splitting to preserve
-#' class proportions. Otherwise, it uses a basic random split. By default, the
-#' sum of \code{train} and \code{test} must be 1 if \code{validation} is not
-#' given. If \code{validation} is specified, \code{train} + \code{test} +
-#' \code{validation} must equal 1.
+#' @param df         A data frame to partition.
+#' @param y          A string with the name of the outcome column.
+#'                 Must match a column in \code{df}.
+#' @param train      A numeric value for the proportion of the
+#'                 training set.
+#' @param test       A numeric value for the proportion of the
+#'                 testing set.
+#' @param validation Optional numeric value for the proportion of
+#'                 the validation set. Default is \code{NULL}. If
+#'                 specified, train + test + validation must equal 1.
+#' @param seed       A numeric seed for reproducibility.
+#'                 Default is 2025.
 #'
-#' If \code{global = TRUE}, all partitioned data frames are written into the
-#' global environment and uploaded to an h2o server with names matching those in
-#' the returned list (e.g., "hmda.train" will also generate "hmda.train.hex").
+#' @return A named list containing the partitioned data frames
+#'         and their corresponding H2O frames:
+#'         \describe{
+#'           \item{hmda.train}{Training set (data frame).}
+#'           \item{hmda.test}{Testing set (data frame).}
+#'           \item{hmda.validation}{Validation set (data frame), if any.}
+#'           \item{hmda.train.hex}{Training set as an H2O frame.}
+#'           \item{hmda.test.hex}{Testing set as an H2O frame.}
+#'           \item{hmda.validation.hex}{Validation set as an H2O frame, if
+#'           applicable.}
+#'         }
 #'
-#' @param df A data frame.
-#' @param y A string indicating the name of the outcome column. If provided, it
-#'   should match a column name in \code{df}.
-#' @param train A numeric value indicating the proportion of data for the
-#'   training set.
-#' @param test A numeric value indicating the proportion of data for the
-#'   testing set.
-#' @param validation Optional numeric value indicating the proportion of data
-#'   for the validation set. Defaults to \code{NULL}.
-#' @param global logical. If \code{TRUE}, the created data frames will be
-#'   assigned to the global environment and also uploaded to h2o with matching
-#'   names.
-#' @param seed A numeric seed for reproducibility. Defaults to 2025.
-#'
-#' @return A named list containing the training, testing, and (optionally)
-#'   validation data frames.
+#' @details This function uses the \code{splitTools} package to perform
+#'   the partition. When \code{y} is provided and is a factor or character,
+#'   a stratified split is performed to preserve class proportions. Otherwise,
+#'   a basic random split is used. The partitions are then converted to H2O
+#'   frames using \code{h2o::as.h2o()}.
 #'
 #' @examples
 #' \dontrun{
-#' # Install/load required packages:
-#' # install.packages("splitTools")
-#' library(splitTools)
-#' library(h2o)
-#' h2o.init()
+#'   # Example: Random split (80% train, 20% test) using iris data
+#'   data(iris)
+#'   splits <- hmda.partition(
+#'               df = iris,
+#'               train = 0.8,
+#'               test = 0.2,
+#'               seed = 2025
+#'             )
+#'   train_data <- splits$hmda.train
+#'   test_data  <- splits$hmda.test
 #'
-#' # Using the iris dataset:
-#' data(iris)
-#'
-#' # 1) Random partition: 80% train, 20% test
-#' splits <- hmda.partition(
-#'   df = iris,
-#'   train = 0.8,
-#'   test = 0.2,
-#'   global = FALSE
-#' )
-#' train_data <- splits$hmda.train
-#' test_data  <- splits$hmda.test
-#'
-#' # 2) Stratified partition: 70% train, 15% test, 15% validation
-#' splits_strat <- hmda.partition(
-#'   df = iris,
-#'   y = "Species",
-#'   train = 0.7,
-#'   test = 0.15,
-#'   validation = 0.15,
-#'   global = FALSE
-#' )
-#' train_data_strat <- splits_strat$hmda.train
-#' test_data_strat  <- splits_strat$hmda.test
-#' validation_data_strat <- splits_strat$hmda.validation
-#'
-#' # 3) With global=TRUE, data frames are created in the global environment
-#' #    and also uploaded to h2o (e.g., hmda.train and hmda.train.hex).
+#'   # Example: Stratified split (70% train, 15% test, 15% validation)
+#'   # using iris data, stratified by Species
+#'   splits_strat <- hmda.partition(
+#'                      df = iris,
+#'                      y = "Species",
+#'                      train = 0.7,
+#'                      test = 0.15,
+#'                      validation = 0.15,
+#'                      seed = 2025
+#'                    )
+#'   train_strat <- splits_strat$hmda.train
+#'   test_strat  <- splits_strat$hmda.test
+#'   valid_strat <- splits_strat$hmda.validation
 #' }
 #'
 #' @export
+#' @author E. F. Haghish
 
 hmda.partition <- function(df,
                            y = NULL,
                            train = 0.80,
                            test = 0.20,
                            validation = NULL,
-                           global = FALSE,
+                           # global = FALSE, #not needed atm
                            seed = 2025) {
 
   if (!requireNamespace("splitTools", quietly = TRUE)) {
@@ -156,34 +153,21 @@ hmda.partition <- function(df,
     )
   }
 
-
-
-  # If validation is not NULL, add it to 'out'
-
-
-  # If global = TRUE, assign data frames and h2o frames to global env
-  if (isTRUE(global)) {
-    if (!requireNamespace("h2o", quietly = TRUE)) {
-      stop("Package 'h2o' must be installed to upload frames to h2o.")
-    }
-
-    # Optionally, check if h2o is running;
-    # if (!h2o::h2o.connection()) {
-    #   h2o::h2o.init()
-    # }
-
-    for (nm in names(out)) {
-      # Assign data frame globally
-      message(paste0("uploading ",nm, ".hex data to the local h2o server on your machine"))
-      assign(nm, out[[nm]], envir = .GlobalEnv)
-      # Upload to h2o with the same name
-      assign(
-        paste0(nm, ".hex"),
-        h2o::as.h2o(out[[nm]], destination_frame = paste0(nm,".hex")),
-        envir = .GlobalEnv
-      )
-    }
-  }
+  # # If global = TRUE, assign data frames and h2o frames to global env
+  # # ============================================================
+  # if (isTRUE(global)) {
+  #   for (nm in names(out)) {
+  #     # Assign data frame globally
+  #     message(paste0("uploading ",nm, ".hex data to the local h2o server on your machine"))
+  #     assign(nm, out[[nm]], envir = .GlobalEnv)
+  #     # Upload to h2o with the same name
+  #     assign(
+  #       paste0(nm, ".hex"),
+  #       h2o::as.h2o(out[[nm]], destination_frame = paste0(nm,".hex")),
+  #       envir = .GlobalEnv
+  #     )
+  #   }
+  # }
 
   return(out)
 }
