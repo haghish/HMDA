@@ -14,12 +14,7 @@ hmda.grid(
   hyper_params = list(),
   nfolds = 10,
   seed = NULL,
-  fold_column = NULL,
-  weights_column = NULL,
   keep_cross_validation_predictions = TRUE,
-  stopping_rounds = NULL,
-  stopping_metric = "AUTO",
-  stopping_tolerance = NULL,
   recovery_dir = NULL,
   sort_by = "logloss",
   ...
@@ -56,23 +51,8 @@ Default is 10.}
 \item{seed}{Integer. A seed for reproducibility.
 Default is \code{NULL}.}
 
-\item{fold_column}{Character. Column name for cross-validation fold
-assignment. Default is \code{NULL}.}
-
-\item{weights_column}{Character. Column name for observation weights.
-Default is \code{NULL}.}
-
 \item{keep_cross_validation_predictions}{Logical. Whether to keep
 cross-validation predictions. Default is \code{TRUE}.}
-
-\item{stopping_rounds}{Integer. Number of rounds with no improvement
-to trigger early stopping. Default is \code{NULL}.}
-
-\item{stopping_metric}{Character. Metric used for early stopping.
-Default is "AUTO".}
-
-\item{stopping_tolerance}{Numeric. Relative tolerance for early stopping.
-Default is \code{NULL}.}
 
 \item{recovery_dir}{Character. Directory path to save the grid search
 output. If provided, the grid is saved using
