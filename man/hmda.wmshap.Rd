@@ -111,43 +111,68 @@ This function is designed as a wrapper for the HMDA package and calls the
 }
 \examples{
 \dontrun{
-  # Example: Compute weighted mean SHAP values for a set of models from HMDA.
-
-  # Load required libraries
-  library(h2o)
-  library(shapley)
   library(HMDA)
+  hmda.init()
+  h2o.removeAll()
 
-  # Initiate H2O server
-  h2o.init(ignore_config = TRUE, nthreads = 2, bind_to_localhost = FALSE, insecure = TRUE)
+  # Import a sample binary outcome dataset into H2O
+  train <- h2o.importFile(
+  "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_train_10k.csv")
+  test <- h2o.importFile(
+  "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_test_5k.csv")
 
-  # Upload data to H2O
-  prostate_path <- system.file("extdata", "prostate.csv", package = "h2o")
-  prostate <- h2o.importFile(path = prostate_path, header = TRUE)
+  # Identify predictors and response
+  y <- "response"
+  x <- setdiff(names(train), y)
 
-  # Assume 'models' is a grid or ensemble object from HMDA or a vector of model IDs
-  # For example, retrieve model IDs from an AutoML run:
-  # models <- h2o.get_ids(aml)
+  # For binary classification, response should be a factor
+  train[, y] <- as.factor(train[, y])
+  test[, y] <- as.factor(test[, y])
 
-  # Compute weighted SHAP values with AUCPR as the performance metric
-  result <- hmda.wmshap(models = models,
-                        newdata = prostate,
+  params <- list(learn_rate = c(0.01, 0.1),
+                 max_depth = c(3, 5, 9),
+                 sample_rate = c(0.8, 1.0)
+  )
+
+  # Train and validate a cartesian grid of GBMs
+  hmda_grid1 <- hmda.grid(algorithm = "gbm", x = x, y = y,
+                          grid_id = "hmda_grid1",
+                          training_frame = train,
+                          nfolds = 10,
+                          ntrees = 100,
+                          seed = 1,
+                          hyper_params = gbm_params1)
+
+  # Assess the performances of the models
+  grid_performance <- hmda.grid.analysis(hmda_grid1)
+
+  # Return the best 2 models according to each metric
+  hmda.best.models(grid_performance, n_models = 2)
+
+  # build an autoEnsemble model & test it with the testing dataset
+  meta <- hmda.autoEnsemble(models = hmda_grid1, training_frame = train)
+  print(h2o.performance(model = meta$model, newdata = test))
+
+  # compute weighted mean shap values
+  wmshap <- hmda.wmshap(models = hmda_grid1,
+                        newdata = test,
                         performance_metric = "aucpr",
                         standardize_performance_metric = FALSE,
                         performance_type = "xval",
                         minimum_performance = 0,
                         method = "shapratio",
                         cutoff = 0.01,
-                        top_n_features = NULL,
-                        n_models = 10,
-                        sample_size = nrow(prostate),
                         plot = TRUE)
 
-  # View the plot of weighted mean SHAP values and confidence intervals
-  print(result$plot)
+  # identify the important features
+  selected <- hmda.feature.selection(wmshap,
+                                     method = c("shapratio"),
+                                     cutoff = 0.01)
+  print(selected)
 
-  # View the data frame of weighted SHAP values
-  head(result$shap_values)
+  # View the plot of weighted mean SHAP values and confidence intervals
+  print(wmshap$plot)
+
 }
 }
 \author{
