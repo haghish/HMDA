@@ -29,18 +29,8 @@
 #'                   Default is 10.
 #' @param seed       Integer. A seed for reproducibility.
 #'                   Default is \code{NULL}.
-#' @param fold_column Character. Column name for cross-validation fold
-#'                   assignment. Default is \code{NULL}.
-#' @param weights_column Character. Column name for observation weights.
-#'                   Default is \code{NULL}.
 #' @param keep_cross_validation_predictions Logical. Whether to keep
 #'                   cross-validation predictions. Default is \code{TRUE}.
-#' @param stopping_rounds Integer. Number of rounds with no improvement
-#'                   to trigger early stopping. Default is \code{NULL}.
-#' @param stopping_metric  Character. Metric used for early stopping.
-#'                   Default is "AUTO".
-#' @param stopping_tolerance Numeric. Relative tolerance for early stopping.
-#'                   Default is \code{NULL}.
 #' @param recovery_dir  Character. Directory path to save the grid search
 #'                   output. If provided, the grid is saved using
 #'                   \code{h2o.saveGrid()}.
@@ -111,14 +101,8 @@ hmda.grid <- function(algorithm = c("drf",  "gbm"),
 
                       nfolds = 10,
                       seed = NULL,
-                      fold_column = NULL,
-                      weights_column = NULL,
                       keep_cross_validation_predictions = TRUE,
 
-                      # STOPPING PARAMETERS
-                      stopping_rounds = NULL,
-                      stopping_metric = "AUTO",
-                      stopping_tolerance = NULL,
 
                       # recovery and saving
                       recovery_dir = NULL,
@@ -152,20 +136,38 @@ hmda.grid <- function(algorithm = c("drf",  "gbm"),
   # ============================================================
   MODELIDS <- list()
 
-  # Tuning
-  grid <- h2o.grid(algorithm = algorithm,
-                   y = y,
-                   x = x,
-                   training_frame = training_frame,
-                   hyper_params = hyper_params,
-                   grid_id = grid_id,
+  # There is a buggy error in h2o if validation frame is NULL, which is it's default!
+  if (!is.null(validation_frame)) {
+    grid <- h2o.grid(algorithm = algorithm,
+                     y = y,
+                     x = x,
+                     training_frame = training_frame,
+                     hyper_params = hyper_params,
+                     grid_id = grid_id,
+                     validation_frame = validation_frame,
 
-                   # this setting ensures the models are comparable
-                   seed = seed,
-                   nfolds = nfolds,
-                   keep_cross_validation_predictions = keep_cross_validation_predictions,
-                   recovery_dir = recovery_dir,
-                   ...)
+                     # this setting ensures the models are comparable
+                     seed = seed,
+                     nfolds = nfolds,
+                     keep_cross_validation_predictions = keep_cross_validation_predictions,
+                     recovery_dir = recovery_dir,
+                     ...)
+  }
+  else {
+    grid <- h2o.grid(algorithm = algorithm,
+                     y = y,
+                     x = x,
+                     training_frame = training_frame,
+                     hyper_params = hyper_params,
+                     grid_id = grid_id,
+
+                     # this setting ensures the models are comparable
+                     seed = seed,
+                     nfolds = nfolds,
+                     keep_cross_validation_predictions = keep_cross_validation_predictions,
+                     recovery_dir = recovery_dir,
+                     ...)
+  }
 
   # Save the models if required
   # ============================================================
