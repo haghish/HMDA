@@ -7,9 +7,7 @@ Authors@R:
            role = c("aut", "cre", "cph"),
            email = "haghish@hotmail.com")
 Depends: 
-    R (>= 3.5.0),
-    h2o (>= 3.34.0.0),
-    shapley (>= 0.4)
+    R (>= 3.5.0)
 Description: This R package introduces Holistic Multimodel Domain Analysis (HMDA),
     an new paradigm for exploring domains related to an outcome. HMDA trains a 
     grid of supervised learning models, and instead of selecting the best-performing 
@@ -17,15 +15,17 @@ Description: This R package introduces Holistic Multimodel Domain Analysis (HMDA
     explore domains of items and indicators related to an outcome. For each of the
     models, Weighted Mean SHAP (WMSHAP) is computed, taking the performance of the 
     model into account. 
+Imports:
+  curl (>= 4.3.0),
+  h2o (>= 3.34.0.0),
+  shapley (>= 0.4),
+  autoEnsemble (>= 0.3),
+  h2otools (>= 0.5), 
+  splitTools (>= 1.0.1),
+  dplyr (>= 1.1.4),
+  ggplot2 (>= 3.4.2)
 License: MIT + file LICENSE
 Encoding: UTF-8
-Imports:
-    ggplot2 (>= 3.4.2),
-    h2o (>= 3.34.0.0),
-    curl (>= 4.3.0),
-    waffle (>= 1.0.2),
-    md.log (>= 0.2.0),
-    shapley (>= 0.4)
 RoxygenNote: 7.3.2
 LazyData: true
 URL: https://github.com/haghish/HMDA, https://www.sv.uio.no/psi/english/people/academic/haghish/
