@@ -39,40 +39,34 @@
 #'
 #' @examples
 #' \dontrun{
-#'   # NOTE: This example may take a long time to run on your machine
+#'   # Example: Create a hyperparameter grid for GBM models.
+#'   predictors <- c("var1", "var2", "var3")
+#'   response <- "target"
 #'
-#'   # Initialize H2O (if not already running)
-#'   library(HMDA)
-#'   hmda.init()
+#'   # Define hyperparameter ranges
+#'   hyper_params <- list(
+#'     ntrees = seq(50, 150, by = 25),
+#'     max_depth = c(5, 10, 15),
+#'     learn_rate = c(0.01, 0.05, 0.1),
+#'     sample_rate = c(0.8, 1.0),
+#'     col_sample_rate = c(0.8, 1.0)
+#'   )
 #'
-#'   # Import a sample binary outcome train/test set into H2O
-#'   train <- h2o.importFile(
-#'   "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_train_10k.csv")
-#'   test <- h2o.importFile(
-#'   "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_test_5k.csv")
-#'
-#'   # Identify predictors and response
-#'   y <- "response"
-#'   x <- setdiff(names(train), y)
-#'
-#'   # For binary classification, response should be a factor
-#'   train[, y] <- as.factor(train[, y])
-#'   test[, y] <- as.factor(test[, y])
-#'
-#'   # Run the hyperparameter search using DRF and GBM algorithms.
-#'   result <- hmda.search.param(algorithm = c("gbm"),
-#'                               x = x,
-#'                               y = y,
-#'                               training_frame = train,
-#'                               max_models = 100,
-#'                               nfolds = 10,
-#'                               stopping_metric = "AUC",
-#'                               stopping_rounds = 3)
+#'   # Run the grid search
+#'   grid <- hmda.grid(
+#'     algorithm = "gbm",
+#'     x = predictors,
+#'     y = response,
+#'     training_frame = h2o.getFrame("hmda.train.hex"),
+#'     hyper_params = hyper_params,
+#'     nfolds = 10,
+#'     stopping_metric = "AUTO"
+#'   )
 #'
 #'   # Assess the performances of the models
-#'   grid_performance <- hmda.grid.analysis(gbm_grid1)
+#'   grid_performance <- hmda.grid.analysis(grid)
 #'
-#'   # Return the best models
+#'   # Return the best 2 models according to each metric
 #'   hmda.best.models(grid_performance, n_models = 2)
 #' }
 #'
