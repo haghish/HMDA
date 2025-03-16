@@ -1,61 +1,82 @@
-#' @title Builds Stacked Ensemble Model from H2O Models
-#' @description Multiple trained H2O models are stacked to create an ensemble
+#' @title Build Stacked Ensemble Model Using autoEnsemble R package
+#' @description This function is a wrapper within the HMDA package that
+#'   builds a stacked ensemble model by combining multiple H2O models. It
+#'   leverages the \pkg{autoEnsemble} package to stack a set of trained models
+#'   (e.g., from HMDA grid) into a stronger meta-learner. For more
+#'   details on autoEnsemble, please see the GitHub repository at
+#'   \url{https://github.com/haghish/autoEnsemble} and the CRAN package page at
+#'   \url{https://CRAN.R-project.org/package=autoEnsemble}.
+#'
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom h2o h2o.stackedEnsemble h2o.getModel h2o.auc h2o.aucpr h2o.mcc
 #'             h2o.F2 h2o.mean_per_class_error h2o.giniCoef h2o.accuracy
 # @importFrom h2otools h2o.get_ids
 #' @importFrom curl curl
 #' @importFrom autoEnsemble ensemble
-#' @param models H2O search grid or AutoML grid or a character vector of H2O model IDs.
-#'               the \code{"h2o.get_ids"} function from \code{"h2otools"} can
-#'               retrieve the IDs from grids.
-#' @param training_frame h2o training frame (data.frame) for model training
-#' @param newdata h2o frame (data.frame). the data.frame must be already uploaded
-#'                on h2o server (cloud). when specified, this dataset will be used
-#'                for evaluating the models. if not specified, model performance
-#'                on the training dataset will be reported.
-#' @param family model family. currently only \code{"binary"} classification models
-#'               are supported.
-#' @param strategy character. the current available strategies are \code{"search"}
-#'                 (default) and \code{"top"}. The \code{"search"} strategy searches
-#'                 for the best combination of top-performing diverse models
-#'                 whereas the \code{"top"} strategy is more simplified and just
-#'                 combines the specified of top-performing diverse models without
-#'                 examining the possibility of improving the model by searching for
-#'                 larger number of models that can further improve the model. generally,
-#'                 the \code{"search"} strategy is preferable, unless the computation
-#'                 runtime is too large and optimization is not possible.
-#' @param max integer. specifies maximum number of models for each criteria to be extracted. the
-#'            default value is the \code{"top_rank"} percentage for each model selection
-#'            criteria.
-#' @param model_selection_criteria character, specifying the performance metrics that
-#'        should be taken into consideration for model selection. the default are
-#'        \code{"c('auc', 'aucpr', 'mcc', 'f2')"}. other possible criteria are
-#'        \code{"'f1point5', 'f3', 'f4', 'f5', 'kappa', 'mean_per_class_error', 'gini', 'accuracy'"},
-#'        which are also provided by the \code{"evaluate"} function.
-#' @param min_improvement numeric. specifies the minimum improvement in model
-#'                        evaluation metric to qualify further optimization search.
-#' @param top_rank numeric vector. specifies percentage of the top models taht
-#'                 should be selected. if the strategy is \code{"search"}, the
-#'                 algorithm searches for the best best combination of the models
-#'                 from top ranked models to the bottom. however, if the strategy
-#'                 is \code{"top"}, only the first value of the vector is used
-#'                 (default value is top 1\%).
-#' @param stop_rounds integer. number of stoping rounds, in case the model stops
-#'                    improving
-#' @param reset_stop_rounds logical. if TRUE, every time the model improves the
-#'                          stopping rounds penalty is resets to 0.
-#' @param stop_metric character. model stopping metric. the default is \code{"auc"},
-#'                    but \code{"aucpr"} and \code{"mcc"} are also available.
-#' @param seed random seed (recommended)
-#' @param verbatim logical. if TRUE, it reports additional information about the
-#'                 progress of the model training, particularly used for debugging.
-#' @return a list including the ensemble model and the top-rank models that were
-#'         used in the model
-#' @author E. F. Haghish
+#'
+#' @param models A grid object, such as HMDA grid, or a character vector of H2O model IDs.
+#'   The \code{h2o.get_ids} function from \pkg{h2otools} can be used to extract model
+#'   IDs from grids.
+#' @param training_frame An H2OFrame (or data frame already uploaded to the H2O server)
+#'   that contains the training data used to build the base models.
+#' @param newdata An H2OFrame (or data frame already uploaded to the H2O server) to be used
+#'   for evaluating the ensemble. If not specified, performance on the training data is used
+#'   (for instance, cross-validation performance).
+#' @param family A character string specifying the model family.
+#' @param strategy A character vector specifying the ensemble strategy. The available
+#'   strategy is \code{"search"} (default). The \code{"search"} strategy searches for
+#'   the best combination of top-performing diverse models.
+#' @param model_selection_criteria A character vector specifying the performance metrics
+#'   to consider for model selection. The default is \code{c("auc", "aucpr", "mcc", "f2")}.
+#'   Other possible criteria include \code{"f1point5"}, \code{"f3"}, \code{"f4"},
+#'   \code{"f5"}, \code{"kappa"}, \code{"mean_per_class_error"}, \code{"gini"}, and
+#'   \code{"accuracy"}.
+#' @param min_improvement Numeric. The minimum improvement in the evaluation metric
+#'   required to continue the ensemble search.
+#' @param max Integer. The maximum number of models for each selection criterion.
+#'   If \code{NULL}, a default value based on the top rank percentage is used.
+#' @param top_rank Numeric vector. Specifies the percentage (or percentages) of the
+#'   top models that should be considered for ensemble selection. If the strategy is
+#'   \code{"search"}, the function searches for the best combination of models from
+#'   the top to the bottom ranked; if the strategy is \code{"top"}, only the first value
+#'   is used. Default is \code{seq(0.01, 0.99, 0.01)}.
+#' @param stop_rounds Integer. The number of consecutive rounds with no improvement
+#'   in the performance metric before stopping the search.
+#' @param reset_stop_rounds Logical. If \code{TRUE}, the stopping rounds counter is
+#'   reset each time an improvement is observed.
+#' @param stop_metric Character. The metric used for early stopping; the default is
+#'   \code{"auc"}. Other options include \code{"aucpr"} and \code{"mcc"}.
+#' @param seed Integer. A random seed for reproducibility. Default is \code{-1}.
+#' @param verbatim Logical. If \code{TRUE}, the function prints additional
+#'   progress information for debugging purposes.
+#'
+#' @return A list containing:
+#'   \describe{
+#'     \item{model}{The ensemble model built by autoEnsemble.}
+#'     \item{top_models}{A data frame of the top-ranked base models that were used
+#'           in building the ensemble.}
+#'   }
+#'
+#'
+#' @details
+#'   This wrapper function integrates with the HMDA package workflow to build a
+#'   stacked ensemble model from a set of base H2O models. It calls the
+#'   \code{ensemble()} function from the \pkg{autoEnsemble} package to construct the
+#'   ensemble. The function is designed to work within HMDA's framework, where base
+#'   models are generated via grid search or AutoML. For more details on the autoEnsemble
+#'   approach, see:
+#'   \itemize{
+#'     \item GitHub: \url{https://github.com/haghish/autoEnsemble}
+#'     \item CRAN: \url{https://CRAN.R-project.org/package=autoEnsemble}
+#'   }
+#'
+#'   The ensemble strategy \code{"search"} (default) searches for the best combination
+#'   of top-performing and diverse models to improve overall performance. The wrapper
+#'   returns both the final ensemble model and the list of top-ranked models used in the
+#'   ensemble.
+#'
 #'
 #' @examples
-#'
 #' \dontrun{
 #' # load the required libraries for building the base-learners and the ensemble models
 #' library(h2o)
@@ -120,27 +141,22 @@
 #'
 #' }
 #' @export
+#' @author E. F. Haghish
 
-
-
-hmda.autoEnsemble <- function(
-    models,
-    training_frame,
-    newdata = NULL,
-    family = "binary",
-    strategy = c("search"),
-    model_selection_criteria = c("auc","aucpr","mcc","f2"),
-    min_improvement = 0.00001,
-    max = NULL,
-    top_rank = seq(0.01, 0.99, 0.01),
-    stop_rounds = 3,
-    reset_stop_rounds = TRUE,
-    stop_metric = "auc",
-    seed = -1,
-    verbatim = FALSE
-    #loaded = TRUE,
-    #path = NULL
-    ) {
+hmda.autoEnsemble <- function(models,
+                              training_frame,
+                              newdata = NULL,
+                              family = "binary",
+                              strategy = c("search"),
+                              model_selection_criteria = c("auc","aucpr","mcc","f2"),
+                              min_improvement = 0.00001,
+                              max = NULL,
+                              top_rank = seq(0.01, 0.99, 0.01),
+                              stop_rounds = 3,
+                              reset_stop_rounds = TRUE,
+                              stop_metric = "auc",
+                              seed = -1,
+                              verbatim = FALSE) {
 
   return(
     ensemble(
@@ -158,6 +174,6 @@ hmda.autoEnsemble <- function(
       stop_metric = stop_metric,
       seed = seed,
       verbatim = verbatim
-      #loaded = TRUE,
-      #path = NULL)
+    )
+  )
 }
