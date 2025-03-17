@@ -2,8 +2,8 @@
 <!-- <a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDAH2O.png' align="right" height="150" /> </a> -->
 <a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA.png' align="right" height="150" /></a>
 
-[![GitHub dev](https://img.shields.io/github/v/release/haghish/hmda.svg?color=2eb885)](https://github.com/haghish/hmda/releases/?include_prereleases&sort=semver "View GitHub releases")
-[![CRAN version](https://www.r-pkg.org/badges/version/hmda?color=2eb8b3)](https://cran.r-project.org/package=hmda)  [![](https://cranlogs.r-pkg.org/badges/grand-total/hmda?color=a958d1)](https://cran.r-project.org/package=hmda) [![](man/figures/manual.svg)](https://CRAN.R-project.org/package=hmda)
+[![GitHub dev](https://img.shields.io/github/v/release/haghish/hmda.svg?color=2ea6b8)](https://github.com/haghish/hmda/releases/?include_prereleases&sort=semver "View GitHub releases")
+[![CRAN version](https://www.r-pkg.org/badges/version/hmda?color=2eb8b3)](https://cran.r-project.org/package=hmda)  [![](https://cranlogs.r-pkg.org/badges/grand-total/hmda?color=96d2db)](https://cran.r-project.org/package=hmda) [![](man/figures/manual.svg)](https://CRAN.R-project.org/package=hmda)
 
 Holistic Multimodel Domain Analysis (**HMDA**) — A New Paradigm for Exploratory Machine Learning
 ================================================================
