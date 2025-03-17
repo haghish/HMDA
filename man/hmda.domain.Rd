@@ -65,47 +65,61 @@ This function applies different criteria to visualize SHAP contributions
 \examples{
 
 \dontrun{
-# load the required libraries for building the base-learners and the ensemble models
-library(h2o)            #shapley supports h2o models
-library(shapley)
+library(HMDA)
+  hmda.init()
+  h2o.removeAll()
 
-# initiate the h2o server
-h2o.init(ignore_config = TRUE, nthreads = 2, bind_to_localhost = FALSE, insecure = TRUE)
+  # Import a sample binary outcome dataset into H2O
+  train <- h2o.importFile(
+  "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_train_10k.csv")
+  test <- h2o.importFile(
+  "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_test_5k.csv")
 
-# upload data to h2o cloud
-prostate_path <- system.file("extdata", "prostate.csv", package = "h2o")
-prostate <- h2o.importFile(path = prostate_path, header = TRUE)
+  # Identify predictors and response
+  y <- "response"
+  x <- setdiff(names(train), y)
 
-### H2O provides 2 types of grid search for tuning the models, which are
-### AutoML and Grid. Below, I demonstrate how weighted mean shapley values
-### can be computed for both types.
+  # For binary classification, response should be a factor
+  train[, y] <- as.factor(train[, y])
+  test[, y] <- as.factor(test[, y])
 
-set.seed(10)
+  params <- list(learn_rate = c(0.01, 0.1),
+                 max_depth = c(3, 5, 9),
+                 sample_rate = c(0.8, 1.0)
+  )
 
-#######################################################
-### PREPARE AutoML Grid (takes a couple of minutes)
-#######################################################
-# run AutoML to tune various models (GBM) for 60 seconds
-y <- "CAPSULE"
-prostate[,y] <- as.factor(prostate[,y])  #convert to factor for classification
-aml <- h2o.automl(y = y, training_frame = prostate, max_runtime_secs = 120,
-                 include_algos=c("GBM"),
+  # Train and validate a cartesian grid of GBMs
+  hmda_grid1 <- hmda.grid(algorithm = "gbm", x = x, y = y,
+                          grid_id = "hmda_grid1",
+                          training_frame = train,
+                          nfolds = 10,
+                          ntrees = 100,
+                          seed = 1,
+                          hyper_params = gbm_params1)
 
-                 # this setting ensures the models are comparable for building a meta learner
-                 seed = 2023, nfolds = 10,
-                 keep_cross_validation_predictions = TRUE)
+  # Assess the performances of the models
+  grid_performance <- hmda.grid.analysis(hmda_grid1)
 
-### call 'shapley' function to compute the weighted mean and weighted confidence intervals
-### of SHAP values across all trained models.
-### Note that the 'newdata' should be the testing dataset!
-result <- shapley(models = aml, newdata = prostate, plot = TRUE)
+  # Return the best 2 models according to each metric
+  hmda.best.models(grid_performance, n_models = 2)
 
-#######################################################
-### PLOT THE WEIGHTED MEAN SHAP VALUES
-#######################################################
+  # build an autoEnsemble model & test it with the testing dataset
+  meta <- hmda.autoEnsemble(models = hmda_grid1, training_frame = train)
+  print(h2o.performance(model = meta$model, newdata = test))
 
-shapley.plot(result, plot = "bar")
-shapley.plot(result, plot = "waffle")
+  # compute weighted mean shap values
+  wmshap <- hmda.wmshap(models = hmda_grid1,
+                        newdata = test,
+                        performance_metric = "aucpr",
+                        standardize_performance_metric = FALSE,
+                        performance_type = "xval",
+                        minimum_performance = 0,
+                        method = "shapratio",
+                        cutoff = 0.01,
+                        plot = TRUE)
+
+  # define domains to combine their WMSHAP values
+  ...
 }
 }
 \author{
