@@ -22,6 +22,7 @@ Imports:
   autoEnsemble (>= 0.3),
   h2otools (>= 0.5), 
   splitTools (>= 1.0.1),
+  psych (>= 2.4.6),
   dplyr (>= 1.1.4),
   ggplot2 (>= 3.4.2)
 License: MIT + file LICENSE
