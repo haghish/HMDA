@@ -18,7 +18,7 @@ Description: This R package introduces Holistic Multimodel Domain Analysis (HMDA
 Imports:
   curl (>= 4.3.0),
   h2o (>= 3.34.0.0),
-  shapley (>= 0.4),
+  shapley (>= 0.5),
   autoEnsemble (>= 0.3),
   h2otools (>= 0.5), 
   splitTools (>= 1.0.1),
