@@ -3,23 +3,12 @@
 #' @param shapley object of class 'shapley', as returned by the 'shapley' function
 #' @param plot character, specifying the type of the plot, which can be either
 #'            'bar', 'waffle', or 'shap'. The default is 'bar'.
-#' @param method character, specifying the method used for identifying the most
-#'               important features according to their weighted SHAP values.
-#'               The default selection method is "AUTO", which selects a method
-#'               based on number of models that have been evaluated because
-#'               lowerCI method is not applicable to SHAP values of a single
-#'               model. If 'lowerCI' is specified,
-#'               features whose lower weighted confidence interval exceeds the
-#'               predefined 'cutoff' value would be reported.
-#'               Alternatively, the "mean" option can be specified, indicating
-#'               any feature with normalized weighted mean SHAP contribution above
-#'               the specified 'cutoff' should be selected. Another
-#'               alternative options is "shapratio", a method that filters
-#'               for features where the proportion of their relative weighted SHAP
-#'               value exceeds the 'cutoff'. This approach calculates the relative
-#'               contribution of each feature's weighted SHAP value against the
-#'               aggregate of all features, with those surpassing the 'cutoff'
-#'               being selected as top feature.
+#' @param method Character. Specify the method for selecting important features
+#'               based on their weighted mean SHAP ratios. The default is
+#'               \code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
+#'               exceeds the \code{cutoff}. The alternative is
+#'               \code{"lowerCI"}, which selects features whose lower bound of confidence
+#'               interval exceeds the \code{cutoff}.
 #' @param domains character list, specifying the domains for grouping the features'
 #'                contributions. Domains are clusters of features' names, that
 #'                can be used to compute WMSHAP at higher level, along with
@@ -93,7 +82,7 @@
 #'                         standardize_performance_metric = FALSE,
 #'                         performance_type = "xval",
 #'                         minimum_performance = 0,
-#'                         method = "shapratio",
+#'                         method = "mean",
 #'                         cutoff = 0.01,
 #'                         plot = TRUE)
 #'
