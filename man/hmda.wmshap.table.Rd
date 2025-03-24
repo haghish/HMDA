@@ -6,7 +6,7 @@
 \usage{
 hmda.wmshap.table(
   wmshap,
-  method = c("shapratio"),
+  method = c("mean"),
   cutoff = 0.01,
   round = 3,
   exclude_features = NULL,
@@ -20,8 +20,12 @@ hmda.wmshap.table(
 \item{wmshap}{A wmshap object, returned by the hmda.wmshap function
 containing a data frame \code{summaryShaps}.}
 
-\item{method}{Character. The column name in \code{summaryShaps} used
-for feature selection. Default is \code{"shapratio"}.}
+\item{method}{Character. Specify the method for selecting important features
+based on their weighted mean SHAP ratios. The default is
+\code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
+exceeds the \code{cutoff}. The alternative is
+\code{"lowerCI"}, which selects features whose lower bound of confidence
+interval exceeds the \code{cutoff}.}
 
 \item{cutoff}{Numeric. The threshold cutoff for the selection method;
 only features with a value in the \code{method} column
@@ -60,7 +64,7 @@ Generates a summary table of weighted mean SHAP (WMSHAP) values
   and confidence intervals for each feature based on a weighted SHAP analysis.
   The function filters the SHAP summary table (from a \code{wmshap} object) by
   selecting features that meet or exceed a specified cutoff using a selection
-  method (default "shapratio"). It then sorts the table by the mean SHAP value,
+  method (default "mean"). It then sorts the table by the mean SHAP value,
   formats the SHAP values along with their 95\% confidence intervals into a single
   string, and optionally adds human-readable feature descriptions from a provided
   dictionary. The output is returned as a markdown table using the \pkg{pander}
@@ -117,13 +121,13 @@ Generates a summary table of weighted mean SHAP (WMSHAP) values
                         standardize_performance_metric = FALSE,
                         performance_type = "xval",
                         minimum_performance = 0,
-                        method = "shapratio",
+                        method = "mean",
                         cutoff = 0.01,
                         plot = TRUE)
 
   # identify the important features
   selected <- hmda.feature.selection(wmshap,
-                                     method = c("shapratio"),
+                                     method = c("mean"),
                                      cutoff = 0.01)
   print(selected)
 
@@ -132,7 +136,7 @@ Generates a summary table of weighted mean SHAP (WMSHAP) values
 
   # get the wmshap table output in Markdown format:
   md_table <- shapley.table(wmshap = wmshap,
-                            method = "shapratio",
+                            method = "mean",
                             cutoff = 0.01,
                             round = 3,
                             markdown.table = TRUE)

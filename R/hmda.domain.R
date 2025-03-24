@@ -3,12 +3,6 @@
 #' @param shapley object of class 'shapley', as returned by the 'shapley' function
 #' @param plot character, specifying the type of the plot, which can be either
 #'            'bar', 'waffle', or 'shap'. The default is 'bar'.
-#' @param method Character. Specify the method for selecting important features
-#'               based on their weighted mean SHAP ratios. The default is
-#'               \code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
-#'               exceeds the \code{cutoff}. The alternative is
-#'               \code{"lowerCI"}, which selects features whose lower bound of confidence
-#'               interval exceeds the \code{cutoff}.
 #' @param domains character list, specifying the domains for grouping the features'
 #'                contributions. Domains are clusters of features' names, that
 #'                can be used to compute WMSHAP at higher level, along with
@@ -33,9 +27,8 @@
 #' @examples
 #'
 #' \dontrun{
-#' library(HMDA)
+#'   library(HMDA)
 #'   hmda.init()
-#'   h2o.removeAll()
 #'
 #'   # Import a sample binary outcome dataset into H2O
 #'   train <- h2o.importFile(
@@ -63,7 +56,7 @@
 #'                           nfolds = 10,
 #'                           ntrees = 100,
 #'                           seed = 1,
-#'                           hyper_params = gbm_params1)
+#'                           hyper_params = params)
 #'
 #'   # Assess the performances of the models
 #'   grid_performance <- hmda.grid.analysis(hmda_grid1)
@@ -87,7 +80,22 @@
 #'                         plot = TRUE)
 #'
 #'   # define domains to combine their WMSHAP values
-#'   ...
+#'   =============================================
+#'
+#'   There are different ways to specify a cluster of features or even
+#'   a group of factors that touch on a broader domain. HMDA includes
+#'   exploratory factor analysis procedure to help with this process
+#'   (see ?hmda.efa function). Here, "assuming" that we have good reasons
+#'   to combine some of the features under some clusters:
+#'
+#'   domains = list(Group1 = c("x22", "x18", "x14", "x1", "x10", "x4"),
+#'                  Group2 = c("x25", "x23", "x6", "x27"),
+#'                  Group3 = c("x28", "x26"))
+#'
+#'   hmda.domain(shapley = wmshap,
+#'               plot = "bar",
+#'               domains = domains,
+#'               print = TRUE)
 #' }
 #' @export
 #' @author E. F. Haghish
@@ -96,7 +104,6 @@
 hmda.domain <- function(shapley,
                         domains,
                         plot = "bar",
-                        method = "AUTO",
                         legendstyle = "continuous",
                         scale_colour_gradient = NULL, #this is a BUG because it is not implemented
                         # COLORCODE IS MISSING :(
@@ -106,7 +113,6 @@ hmda.domain <- function(shapley,
     shapley.domain(shapley = shapley,
              domains = domains,
              plot = plot,
-             method = method,
              legendstyle = legendstyle,
              scale_colour_gradient = scale_colour_gradient, #this is a BUG because it is not implemented
              # COLORCODE IS MISSING :(
