@@ -1,4 +1,5 @@
 #' @importFrom psych fa.diagram fa.sort factor.scores omega
+#' @importFrom h2otools capture
 #' @title Perform Exploratory Factor Analysis with HMDA
 #' @description Performs exploratory factor analysis (EFA) on a specified set
 #'   of features from a data frame using the \pkg{psych} package. The function
@@ -43,6 +44,7 @@
 #'                         using \code{psych::fa.diagram}. Default is \code{FALSE}.
 #' @param factor_names     Character vector. Optional names to assign to the
 #'                         extracted factors (i.e., new column names for loadings).
+#' @param verbose Logical. If \code{TRUE}, the factor loadings are printed in the console.
 #'
 #' @return A list with the following components:
 #'   \describe{
@@ -71,32 +73,41 @@
 #'   EFA object.
 #'
 #' @examples
-#' \dontrun{
-#'   # Example: Perform EFA on a dataset 'raw' using selected features.
-#'   # Assume 'raw' is a data frame and 'importantFeatures' is a vector of
-#'   # feature names determined to be important (e.g., from a SHAP analysis).
-#'   importantFeatures <- c("feature1", "feature2", "feature3")
-#'   efa_results <- hmda.efa(df = raw,
-#'                           features = importantFeatures,
-#'                           nfactors = 3,
-#'                           algorithm = "minres",
-#'                           rotation = "promax",
-#'                           minimum_loadings = 0.30,
-#'                           exclude_features = c("featureX"),
-#'                           reverse_features = c("feature2"),
-#'                           plot = TRUE,
-#'                           factor_names = c("Factor1", "Factor2", "Factor3"))
+#'   # Example: assess feature suitability for EFA using the USJudgeRatings dataset.
+#'   # this dataset contains ratings on several aspects of U.S. federal judges' performance.
+#'   # Here, we check whether these rating variables are suitable for EFA.
+#'   data("USJudgeRatings")
+#'   features_to_check <- colnames(USJudgeRatings[,-1])
+#'   result <- check_efa(
+#'     df = USJudgeRatings,
+#'     features = features_to_check,
+#'     min_unique = 3,
+#'     verbose = TRUE
+#'   )
 #'
-#'   # View the sorted factor loadings
-#'   print(efa_results$efa_loadings)
+#'   # TRUE indicates the features are suitable.
+#'   print(result)
 #'
-#'   # View the reliability analysis
-#'   print(efa_results$efa_reliability)
-#'
-#'   # View the factor correlation matrix
-#'   print(efa_results$factor_correlations)
-#' }
-#'
+#   # Running the EFA analysis (with parallel analysis)
+#   # ============================================================
+#   efa_results <- hmda.efa(df = USJudgeRatings,
+#                           features = colnames(USJudgeRatings[,-1]),
+#                           parallel.analysis = TRUE,
+#                           algorithm = "ml",
+#                           rotation = "promax",
+#                           minimum_loadings = 0.30,
+#                           plot = TRUE)
+#
+#   # View the sorted factor loadings
+#   print(efa_results$efa_loadings)
+#
+#   # View the reliability analysis
+#   print(efa_results$efa_reliability)
+#
+#   # View the factor correlation matrix
+#   print(efa_results$factor_correlations)
+#
+#
 #' @export
 #' @author E. F. Haghish
 
@@ -113,7 +124,8 @@ hmda.efa <- function(df,
                      intercorrelation = 0.3,
                      reverse_features = NULL,
                      plot = FALSE,
-                     factor_names = NULL) {
+                     factor_names = NULL,
+                     verbose = TRUE) {
 
   pa <- NULL
 
@@ -183,7 +195,10 @@ hmda.efa <- function(df,
   loadings <- round(loadings, 2)
   loadings <- fa.sort(loadings)
 
-  print(loadings)
+  if (verbose) {
+    cat(capture.output(print(loadings)), sep = "\n")
+    cat("\n")
+  }
 
   # a better plot would be nice ???
   if (plot) fa.diagram(EFAresults)
@@ -196,7 +211,11 @@ hmda.efa <- function(df,
 
   # 2. Compute reliability for each factor
   reliability_results <- omega(factor_scores)
-  print(reliability_results)
+  if (verbose) {
+    cat(capture.output(print(reliability_results)), sep = "\n")
+    cat("\n")
+  }
+
 
   # Factor correlation
   # ====================================================
