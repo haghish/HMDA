@@ -73,6 +73,7 @@ The function performs the following steps:
 \examples{
 \dontrun{
 library(HMDA)
+library(h2o)
 hmda.init()
 h2o.removeAll()
 
