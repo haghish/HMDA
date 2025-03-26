@@ -44,9 +44,9 @@ ggplot object
 This function applies different criteria to visualize SHAP contributions
 }
 \examples{
-
 \dontrun{
   library(HMDA)
+  library(h2o)
   hmda.init()
 
   # Import a sample binary outcome dataset into H2O
@@ -99,13 +99,13 @@ This function applies different criteria to visualize SHAP contributions
                         plot = TRUE)
 
   # define domains to combine their WMSHAP values
-  =============================================
-
-  There are different ways to specify a cluster of features or even
-  a group of factors that touch on a broader domain. HMDA includes
-  exploratory factor analysis procedure to help with this process
-  (see ?hmda.efa function). Here, "assuming" that we have good reasons
-  to combine some of the features under some clusters:
+  # =============================================
+  #
+  # There are different ways to specify a cluster of features or even
+  # a group of factors that touch on a broader domain. HMDA includes
+  # exploratory factor analysis procedure to help with this process
+  # (see ?hmda.efa function). Here, "assuming" that we have good reasons
+  # to combine some of the features under some clusters:
 
   domains = list(Group1 = c("x22", "x18", "x14", "x1", "x10", "x4"),
                  Group2 = c("x25", "x23", "x6", "x27"),
