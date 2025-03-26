@@ -27,7 +27,6 @@ Extracts a specified attribute from each column of a data frame and returns a di
 The function iterates over each column in the input data frame \code{df} and retrieves the specified attribute using \code{attr()}. If the attribute is not found for a column, \code{NA} is returned as its description. The resulting data frame acts as a dictionary for the variables, which is particularly useful for documenting datasets during exploratory data analysis.
 }
 \examples{
-\dontrun{
   # Example: Generate a dictionary of variable labels using the USJudgeRatings dataset.
   # This dataset contains ratings on various performance measures for U.S. federal judges.
   data("USJudgeRatings")
@@ -42,7 +41,6 @@ The function iterates over each column in the input data frame \code{df} and ret
   # Generate the dictionary of labels
   dict <- dictionary(USJudgeRatings, "label")
   print(dict)
-}
 
 }
 \author{

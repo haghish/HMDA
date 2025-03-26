@@ -9,7 +9,7 @@ check_efa(
   features,
   min_unique = 5,
   min_intercorrelation = 0.3,
-  verbatim = FALSE
+  verbose = FALSE
 )
 }
 \arguments{
@@ -23,7 +23,7 @@ values required for a feature. Default is 5.}
 \item{min_intercorrelation}{A numeric threshold for the minimum acceptable
 intercorrelation among features. (Note: this parameter is not used explicitly in the current implementation.) Default is 0.3.}
 
-\item{verbatim}{Logical; if \code{TRUE}, a confirmation message is printed when all
+\item{verbose}{Logical; if \code{TRUE}, a confirmation message is printed when all
 features appear suitable. Default is \code{FALSE}.}
 }
 \value{
@@ -55,7 +55,6 @@ If more than one feature is provided, the function computes the correlation matr
 }
 }
 \examples{
-\dontrun{
   # Example: assess feature suitability for EFA using the USJudgeRatings dataset.
   # this dataset contains ratings on several aspects of U.S. federal judges' performance.
   # Here, we check whether these rating variables are suitable for EFA.
@@ -65,12 +64,11 @@ If more than one feature is provided, the function computes the correlation matr
     df = USJudgeRatings,
     features = features_to_check,
     min_unique = 3,
-    verbatim = TRUE
+    verbose = TRUE
   )
 
   # TRUE indicates the features are suitable.
   print(result)
-}
 
 }
 \author{

@@ -110,7 +110,7 @@ hmda.init <- function(cpu = -1,
     keepTrying <- TRUE
     connection <- NULL
     test       <- 1
-    while (keepTrying) {
+    while (keepTrying & is.null(connection)) {
       # h2o.init(jvm_custom_args = c("-help"))
       # h2o.init(jvm_custom_args = c("-session_timeout=100"))
       # bind_to_localhost = FALSE

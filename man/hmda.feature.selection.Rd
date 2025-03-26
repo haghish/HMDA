@@ -6,7 +6,7 @@
 \usage{
 hmda.feature.selection(
   wmshap,
-  method = c("shapratio"),
+  method = c("mean"),
   cutoff = 0.01,
   top_n_features = NULL
 )
@@ -17,10 +17,12 @@ that must contain a data frame \code{summaryShaps} with at least the columns
 \code{"feature"}, \code{"mean"}, and \code{"lowerCI"}. It may also contain
 additional columns for alternative selection methods.}
 
-\item{method}{Character. Specifies the method to use for feature selection.
-The default is \code{"shapratio"}, which selects features based on whether
-their relative weighted SHAP value exceeds the cutoff. Other methods may be
-implemented in the future. Default is \code{"shapratio"}.}
+\item{method}{Character. Specify the method for selecting important features
+based on their weighted mean SHAP ratios. The default is
+\code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
+exceeds the \code{cutoff}. The alternative is
+\code{"lowerCI"}, which selects features whose lower bound of confidence
+interval exceeds the \code{cutoff}.}
 
 \item{cutoff}{Numeric. The threshold cutoff for the selection method. Features
 with a weighted SHAP value (or ratio) greater than or equal to this value
@@ -71,6 +73,7 @@ The function performs the following steps:
 \examples{
 \dontrun{
 library(HMDA)
+library(h2o)
 hmda.init()
 h2o.removeAll()
 
@@ -119,13 +122,13 @@ wmshap <- hmda.wmshap(models = hmda_grid1,
                       standardize_performance_metric = FALSE,
                       performance_type = "xval",
                       minimum_performance = 0,
-                      method = "shapratio",
+                      method = "mean",
                       cutoff = 0.01,
                       plot = TRUE)
 
 # identify the important features
 selected <- hmda.feature.selection(wmshap,
-                                   method = c("shapratio"),
+                                   method = c("mean"),
                                    cutoff = 0.01)
 print(selected)
 }

@@ -39,15 +39,6 @@ The function first detects numeric columns (other than
         the \code{model_id} from that row. The final result is a unique
         set of model IDs that represent the best models across all metrics.
 }
-\examples{
-\dontrun{
-  # Example: Given a data frame 'merged' with performance metrics,
-  # select the best models per metric.
-  best_ids <- best_of_family(merged)
-  print(best_ids)
-}
-
-}
 \author{
 E. F. Haghish
 }

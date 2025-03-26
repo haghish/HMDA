@@ -8,7 +8,6 @@ hmda.domain(
   shapley,
   domains,
   plot = "bar",
-  method = "AUTO",
   legendstyle = "continuous",
   scale_colour_gradient = NULL,
   print = FALSE
@@ -28,24 +27,6 @@ can be specified at the time.}
 \item{plot}{character, specifying the type of the plot, which can be either
 'bar', 'waffle', or 'shap'. The default is 'bar'.}
 
-\item{method}{character, specifying the method used for identifying the most
-important features according to their weighted SHAP values.
-The default selection method is "AUTO", which selects a method
-based on number of models that have been evaluated because
-lowerCI method is not applicable to SHAP values of a single
-model. If 'lowerCI' is specified,
-features whose lower weighted confidence interval exceeds the
-predefined 'cutoff' value would be reported.
-Alternatively, the "mean" option can be specified, indicating
-any feature with normalized weighted mean SHAP contribution above
-the specified 'cutoff' should be selected. Another
-alternative options is "shapratio", a method that filters
-for features where the proportion of their relative weighted SHAP
-value exceeds the 'cutoff'. This approach calculates the relative
-contribution of each feature's weighted SHAP value against the
-aggregate of all features, with those surpassing the 'cutoff'
-being selected as top feature.}
-
 \item{legendstyle}{character, specifying the style of the plot legend, which
 can be either 'continuous' (default) or 'discrete'. the
 continuous legend is only applicable to 'shap' plots and
@@ -63,11 +44,10 @@ ggplot object
 This function applies different criteria to visualize SHAP contributions
 }
 \examples{
-
 \dontrun{
-library(HMDA)
+  library(HMDA)
+  library(h2o)
   hmda.init()
-  h2o.removeAll()
 
   # Import a sample binary outcome dataset into H2O
   train <- h2o.importFile(
@@ -95,7 +75,7 @@ library(HMDA)
                           nfolds = 10,
                           ntrees = 100,
                           seed = 1,
-                          hyper_params = gbm_params1)
+                          hyper_params = params)
 
   # Assess the performances of the models
   grid_performance <- hmda.grid.analysis(hmda_grid1)
@@ -114,12 +94,27 @@ library(HMDA)
                         standardize_performance_metric = FALSE,
                         performance_type = "xval",
                         minimum_performance = 0,
-                        method = "shapratio",
+                        method = "mean",
                         cutoff = 0.01,
                         plot = TRUE)
 
   # define domains to combine their WMSHAP values
-  ...
+  # =============================================
+  #
+  # There are different ways to specify a cluster of features or even
+  # a group of factors that touch on a broader domain. HMDA includes
+  # exploratory factor analysis procedure to help with this process
+  # (see ?hmda.efa function). Here, "assuming" that we have good reasons
+  # to combine some of the features under some clusters:
+
+  domains = list(Group1 = c("x22", "x18", "x14", "x1", "x10", "x4"),
+                 Group2 = c("x25", "x23", "x6", "x27"),
+                 Group3 = c("x28", "x26"))
+
+  hmda.domain(shapley = wmshap,
+              plot = "bar",
+              domains = domains,
+              print = TRUE)
 }
 }
 \author{

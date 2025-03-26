@@ -13,7 +13,7 @@
    \nNote3: To improve HMDA, please share your thoughts and comments\n       https://github.com/haghish/HMDA/discussions \n       haghish@uio.no
    \nNote4: If you find a bug, post it on GitHub\n       https://github.com/haghish/HMDA\n'
   )
-  options(timeout = 3600) # "seconds"
+
 }
 
 #    \nNote2: If you use HMDA, please consider writing and sharing a tutorial\n       for it. You can reduce imputation error by\n       adding other algorithms e.g. "RF", "Ensemble", ...

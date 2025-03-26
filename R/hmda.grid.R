@@ -56,32 +56,43 @@
 #'
 #' @examples
 #' \dontrun{
-#'   # Example: Create a hyperparameter grid for GBM models.
-#'   predictors <- c("var1", "var2", "var3")
-#'   response <- "target"
+#'   library(HMDA)
+#'   library(h2o)
+#'   hmda.init()
 #'
-#'   # Define hyperparameter ranges
-#'   hyper_params <- list(
-#'     ntrees = seq(50, 150, by = 25),
-#'     max_depth = c(5, 10, 15),
-#'     learn_rate = c(0.01, 0.05, 0.1),
-#'     sample_rate = c(0.8, 1.0),
-#'     col_sample_rate = c(0.8, 1.0)
+#'   # Import a sample binary outcome dataset into H2O
+#'   train <- h2o.importFile(
+#'   "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_train_10k.csv")
+#'   test <- h2o.importFile(
+#'   "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_test_5k.csv")
+#'
+#'   # Identify predictors and response
+#'   y <- "response"
+#'   x <- setdiff(names(train), y)
+#'
+#'   # For binary classification, response should be a factor
+#'   train[, y] <- as.factor(train[, y])
+#'   test[, y] <- as.factor(test[, y])
+#'
+#'   params <- list(learn_rate = c(0.01, 0.1),
+#'                  max_depth = c(3, 5, 9),
+#'                  sample_rate = c(0.8, 1.0)
 #'   )
 #'
-#'   # Run the grid search
-#'   grid <- hmda.grid(
-#'     algorithm = "gbm",
-#'     x = predictors,
-#'     y = response,
-#'     training_frame = h2o.getFrame("hmda.train.hex"),
-#'     hyper_params = hyper_params,
-#'     nfolds = 10,
-#'     stopping_metric = "AUTO"
-#'   )
+#'   # Train and validate a cartesian grid of GBMs
+#'   hmda_grid1 <- hmda.grid(algorithm = "gbm", x = x, y = y,
+#'                           grid_id = "hmda_grid1",
+#'                           training_frame = train,
+#'                           nfolds = 10,
+#'                           ntrees = 100,
+#'                           seed = 1,
+#'                           hyper_params = gbm_params1)
 #'
-#'   # Print the grid search results
-#'   print(grid)
+#'   # Assess the performances of the models
+#'   grid_performance <- hmda.grid.analysis(hmda_grid1)
+#'
+#'   # Return the best 2 models according to each metric
+#'   hmda.best.models(grid_performance, n_models = 2)
 #' }
 #'
 #' @importFrom h2o h2o.grid h2o.saveGrid

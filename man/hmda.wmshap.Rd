@@ -12,7 +12,7 @@ hmda.wmshap(
   standardize_performance_metric = FALSE,
   performance_type = "xval",
   minimum_performance = 0,
-  method = c("shapratio"),
+  method = c("mean"),
   cutoff = 0.01,
   top_n_features = NULL,
   n_models = 10,
@@ -45,10 +45,12 @@ cross-validation ("xval"). Default is \code{"xval"}.}
 a performance equal to or lower than this threshold will have a weight of zero in
 the weighted SHAP calculation. Default is \code{0}.}
 
-\item{method}{Character. Specifies the method for selecting top features based on
-their weighted SHAP values. The default is \code{"shapratio"}, which selects features
-where the proportion of the weighted SHAP value exceeds a specified cutoff. Other
-options include \code{"mean"} and \code{"lowerCI"}.}
+\item{method}{Character. Specify the method for selecting important features
+based on their weighted mean SHAP ratios. The default is
+\code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
+exceeds the \code{cutoff}. The alternative is
+\code{"lowerCI"}, which selects features whose lower bound of confidence
+interval exceeds the \code{cutoff}.}
 
 \item{cutoff}{Numeric. The cutoff value used in the feature selection method
 (default is \code{0.01}).}
@@ -97,7 +99,7 @@ This function is designed as a wrapper for the HMDA package and calls the
   average of SHAP values across multiple models, using a specified performance
   metric (e.g., R Squared, AUC, etc.) as the weight. The performance metric can be
   standardized if required. Additionally, the function selects top features based on
-  different methods (e.g., \code{"shapratio"}, \code{"mean"}, \code{"lowerCI"}) and
+  different methods (e.g., \code{"mean"} or \code{"lowerCI"}) and
   can limit the number of features considered via \code{top_n_features}. The
   \code{n_models} parameter controls how many models must meet a minimum performance
   threshold to be included in the weighted SHAP calculation.
@@ -112,8 +114,8 @@ This function is designed as a wrapper for the HMDA package and calls the
 \examples{
 \dontrun{
   library(HMDA)
+  library(h2o)
   hmda.init()
-  h2o.removeAll()
 
   # Import a sample binary outcome dataset into H2O
   train <- h2o.importFile(
@@ -160,13 +162,13 @@ This function is designed as a wrapper for the HMDA package and calls the
                         standardize_performance_metric = FALSE,
                         performance_type = "xval",
                         minimum_performance = 0,
-                        method = "shapratio",
+                        method = "mean",
                         cutoff = 0.01,
                         plot = TRUE)
 
   # identify the important features
   selected <- hmda.feature.selection(wmshap,
-                                     method = c("shapratio"),
+                                     method = c("mean"),
                                      cutoff = 0.01)
   print(selected)
 

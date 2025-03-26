@@ -11,7 +11,7 @@
 #'   values required for a feature. Default is 5.
 #' @param min_intercorrelation A numeric threshold for the minimum acceptable
 #'   intercorrelation among features. (Note: this parameter is not used explicitly in the current implementation.) Default is 0.3.
-#' @param verbatim Logical; if \code{TRUE}, a confirmation message is printed when all
+#' @param verbose Logical; if \code{TRUE}, a confirmation message is printed when all
 #'   features appear suitable. Default is \code{FALSE}.
 #'
 #' @return \code{TRUE} if all features are deemed suitable for EFA, and \code{FALSE}
@@ -38,7 +38,6 @@
 #' @importFrom stats na.omit cor
 #'
 #' @examples
-#' \dontrun{
 #'   # Example: assess feature suitability for EFA using the USJudgeRatings dataset.
 #'   # this dataset contains ratings on several aspects of U.S. federal judges' performance.
 #'   # Here, we check whether these rating variables are suitable for EFA.
@@ -48,19 +47,19 @@
 #'     df = USJudgeRatings,
 #'     features = features_to_check,
 #'     min_unique = 3,
-#'     verbatim = TRUE
+#'     verbose = TRUE
 #'   )
 #'
 #'   # TRUE indicates the features are suitable.
 #'   print(result)
-#' }
 #'
 #' @export
+
 check_efa <- function(df,
                       features,
                       min_unique = 5,
                       min_intercorrelation = .3,
-                      verbatim = FALSE) {
+                      verbose = FALSE) {
 
   # Vector to store messages for unsuitable features
   unsuitable_messages <- c()
@@ -155,7 +154,7 @@ check_efa <- function(df,
     }
     return(FALSE)
   } else {
-    if (verbatim) message("All features appear suitable for exploratory factor analysis with the minrank algorithm.")
+    if (verbose) cat("All features appear suitable for exploratory factor analysis with the minrank algorithm.\n")
     return(TRUE)
   }
 }

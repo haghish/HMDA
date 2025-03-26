@@ -40,14 +40,13 @@ The function calculates the current product of the
   loop.
 }
 \examples{
-\dontrun{
   # Example 1: Adjust a hyperparameter grid for 100 models.
   params <- list(
     alpha = c(0.1, 0.2, 0.3, 0.4),
     beta = c(1, 2, 3, 4, 5),
     gamma = c(10, 20, 30)
   )
-  new_params <- HMDA:::adjust.params(params, n_models = 1000)
+  new_params <- hmda.adjust.params(params, n_models = 100)
   print(new_params)
 
   # Example 2: The generated hyperparameters range between min and max of each
@@ -59,7 +58,6 @@ The function calculates the current product of the
   )
   new_params <- hmda.adjust.params(params, n_models = 1000)
   print(new_params)
-}
 
 }
 \author{

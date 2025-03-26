@@ -28,15 +28,16 @@
 #'         the \code{model_id} from that row. The final result is a unique
 #'         set of model IDs that represent the best models across all metrics.
 #'
-#' @examples
-#' \dontrun{
-#'   # Example: Given a data frame 'merged' with performance metrics,
-#'   # select the best models per metric.
-#'   best_ids <- best_of_family(merged)
-#'   print(best_ids)
-#' }
+# @examples
+# \dontrun{
+#   # Example: Given a data frame 'merged' with performance metrics,
+#   # select the best models per metric.
+#   best_ids <- best_of_family(merged)
+#   print(best_ids)
+# }
 #'
 #' @author E. F. Haghish
+
 best_of_family <- function(df) {
   # Exclude the "model_id" column and keep numeric columns only.
   metric_cols <- setdiff(names(df), "model_id")
