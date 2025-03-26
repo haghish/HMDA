@@ -79,6 +79,7 @@
 #' @examples
 #' \dontrun{
 #'   library(HMDA)
+#'   library(h2o)
 #'   hmda.init()
 #'
 #'   # Import a sample binary outcome dataset into H2O

@@ -114,8 +114,8 @@ This function is designed as a wrapper for the HMDA package and calls the
 \examples{
 \dontrun{
   library(HMDA)
+  library(h2o)
   hmda.init()
-  h2o.removeAll()
 
   # Import a sample binary outcome dataset into H2O
   train <- h2o.importFile(

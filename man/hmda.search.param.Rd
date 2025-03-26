@@ -142,6 +142,7 @@ hyperparameter space and can be used for prototyping and further manual tuning.
 
   # Initialize H2O (if not already running)
   library(HMDA)
+  library(h2o)
   hmda.init()
 
   # Import a sample binary outcome train/test set into H2O
