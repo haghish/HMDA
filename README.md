@@ -1,15 +1,15 @@
 <!-- https://haghish.github.io/HMDA/ -->
 > __Cite__: Haghish, E.F. (2025). Enhancing Transparency and Robustness in Mental Health Research with Holistic Multimodel Domain Analysis: A Machine Learning Tutorial with a Case Study on Differentiating Adolescent Suicidal Ideation from Attempt. [http://dx.doi.org/10.13140/RG.2.2.32473.63846](http://dx.doi.org/10.13140/RG.2.2.32473.63846)
+
 <!-- <a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDAH2O.png' align="right" height="150" /> </a> -->
 <a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA.png' align="right" height="150" /></a>
 
-<!--
-[![GitHub dev](https://img.shields.io/github/v/release/haghish/hmda.svg?color=2ea6b8)](https://github.com/haghish/hmda/releases/?include_prereleases&sort=semver "View GitHub releases")
-[![CRAN version](https://www.r-pkg.org/badges/version/hmda?color=2eb8b3)](https://cran.r-project.org/package=hmda)  [![](https://cranlogs.r-pkg.org/badges/grand-total/hmda?color=96d2db)](https://cran.r-project.org/package=hmda) [![](man/figures/manual.svg)](https://CRAN.R-project.org/package=hmda)
--->
 
 Holistic Multimodel Domain Analysis (**HMDA**) — A New Paradigm for Exploratory Machine Learning
 ================================================================
+
+[![GitHub dev](https://img.shields.io/github/v/release/haghish/hmda.svg?color=2ea6b8)](https://github.com/haghish/hmda/releases/?include_prereleases&sort=semver "View GitHub releases")
+[![CRAN version](https://www.r-pkg.org/badges/version/hmda?color=2eb8b3)](https://cran.r-project.org/package=hmda)  [![](https://cranlogs.r-pkg.org/badges/grand-total/hmda?color=96d2db)](https://cran.r-project.org/package=hmda) [![](man/figures/manual.svg)](https://CRAN.R-project.org/package=hmda)
 
 Holistic Multimodel Domain Analysis (HMDA) is a new paradigm for exploratory machine learning research, with notable potential applications in mental health and well-being research. Traditional ML analyses typically focus on finding a single "best" model based on performance metrics such as accuracy or the area under the curve (AUC). While this approach can be effective for certain predictive tasks, it can also mask important disagreements among other high-performing models, and overlook the broader, more nuanced associations that might exist in a dataset. In exploratory research, such disagreements are important and should be taken into consideration, rather than making a single-minded inference regarding the "best" model with a negligible performance difference. 
 
