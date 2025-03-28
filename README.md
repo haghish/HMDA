@@ -1,7 +1,7 @@
 <!-- https://haghish.github.io/HMDA/ -->
 > __Cite__: Haghish, E.F. (2025). Enhancing Transparency and Robustness in Mental Health Research with Holistic Multimodel Domain Analysis: A Machine Learning Tutorial with a Case Study on Differentiating Adolescent Suicidal Ideation from Attempt.  
 <span style='font-size:100px;'>&#9650; Article</span> [10.13140/RG.2.2.32473.63846](http://dx.doi.org/10.13140/RG.2.2.32473.63846)  
-<span style='font-size:100px;'>&#9651; Package</span> [10.32614/CRAN.package.HMDA](http://dx.doi.org/10.32614/CRAN.package.HMDA)
+<span style='font-size:100px;'>&#9650; Package</span> [10.32614/CRAN.package.HMDA](http://dx.doi.org/10.32614/CRAN.package.HMDA)
 
 <!-- <a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDAH2O.png' align="right" height="150" /> </a> -->
 <a href="https://github.com/haghish/HMDA"><img src='man/figures/HMDA.png' align="right" height="150" /></a>
