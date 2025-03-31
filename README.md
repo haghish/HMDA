@@ -11,7 +11,7 @@ Holistic Multimodel Domain Analysis (**HMDA**) — A New Paradigm for Explorator
 ================================================================
 
 [![GitHub dev](https://img.shields.io/github/v/release/haghish/hmda.svg?color=2ea6b8)](https://github.com/haghish/hmda/releases/?include_prereleases&sort=semver "View GitHub releases")
-[![CRAN version](https://www.r-pkg.org/badges/version/hmda?color=2eb8b3)](https://cran.r-project.org/package=hmda)  [![](https://cranlogs.r-pkg.org/badges/grand-total/hmda?color=96d2db)](https://cran.r-project.org/package=HMDA) [![](man/figures/manual.svg)](https://CRAN.R-project.org/package=HMDA)
+[![CRAN version](https://www.r-pkg.org/badges/version/HMDA?color=2eb8b3)](https://cran.r-project.org/package=HMDA)  [![](https://cranlogs.r-pkg.org/badges/grand-total/HMDA?color=96d2db)](https://cran.r-project.org/package=HMDA) [![](man/figures/manual.svg)](https://CRAN.R-project.org/package=HMDA)
 
 Holistic Multimodel Domain Analysis (HMDA) is a new paradigm for exploratory machine learning research, with notable potential applications in mental health and well-being research. Traditional ML analyses typically focus on finding a single "best" model based on performance metrics such as accuracy or the area under the curve (AUC). While this approach can be effective for certain predictive tasks, it can also mask important disagreements among other high-performing models, and overlook the broader, more nuanced associations that might exist in a dataset. In exploratory research, such disagreements are important and should be taken into consideration, rather than making a single-minded inference regarding the "best" model with a negligible performance difference. 
 
