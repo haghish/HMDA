@@ -4,7 +4,14 @@
 \alias{hmda.best.models}
 \title{Select Best Models Across All Models in HMDA Grid}
 \usage{
-hmda.best.models(df, n_models = 1)
+hmda.best.models(
+  df,
+  n_models = NULL,
+  metrics = c("logloss", "mae", "mse", "rmse", "rmsle", "mean_per_class_error", "auc",
+    "aucpr", "r2", "accuracy", "f1", "mcc", "f2"),
+  distance_percentage = NULL,
+  hyperparam = FALSE
+)
 }
 \arguments{
 \item{df}{A data frame of class \code{"hmda.grid.analysis"} containing
