@@ -1,7 +1,7 @@
 Package: HMDA
 Type: Package
 Title: Holistic Multimodel Domain Analysis for Exploratory Machine Learning
-Version: 0.1
+Version: 0.2.0
 Authors@R: 
     person("E. F. Haghish",
            role = c("aut", "cre", "cph"),
@@ -24,5 +24,5 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 LazyData: true
-URL: http://dx.doi.org/10.13140/RG.2.2.32473.63846, https://github.com/haghish/HMDA, https://www.sv.uio.no/psi/english/people/academic/haghish/
+URL: http://dx.doi.org/10.13140/RG.2.2.32473.63846, https://github.com/haghish/HMDA
 BugReports: https://github.com/haghish/HMDA/issues

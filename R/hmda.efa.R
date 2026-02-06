@@ -159,7 +159,7 @@ hmda.efa <- function(df,
     #   message(paste(pa$value$nfact, "factors are recommended, but there might be better solutions (for example, up to", sum(pa$value$fa.values > 0), "factors)"))
     # }
     # else message(paste(pa$value$nfact, "factors are recommended"))
-    message(paste(pa$value$nfact, "factors are recommended"))
+    message(paste(pa$value$nfact, "factors are recommended\n\n==============================\n\n"))
   }
 
   # Run the exploratory factor analysis
@@ -169,10 +169,6 @@ hmda.efa <- function(df,
                           fm = algorithm,
                           rotate = rotation)
 
-
-
-  loadings <- EFAresults$loadings
-  #
   # EFAresults <- factanal(~ .,
   #                        data = df[, features],
   #                        factors = if (!is.null(nfactors)) nfactors else pa$value$nfact,

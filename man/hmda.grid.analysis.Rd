@@ -7,7 +7,7 @@
 hmda.grid.analysis(
   grid,
   performance_metrics = c("logloss", "mse", "rmse", "rmsle", "auc", "aucpr",
-    "mean_per_class_error", "r2"),
+    "mean_per_class_error", "r2", "f1", "f2", "mcc", "kappa"),
   sort_by = "logloss"
 )
 }

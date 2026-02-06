@@ -5,16 +5,17 @@
 \title{compute and plot weighted mean SHAP contributions at group level (factors or domains)}
 \usage{
 hmda.domain(
-  shapley,
+  wmshap,
   domains,
   plot = "bar",
   legendstyle = "continuous",
   scale_colour_gradient = NULL,
-  print = FALSE
+  print = FALSE,
+  xlab = "Factors"
 )
 }
 \arguments{
-\item{shapley}{object of class 'shapley', as returned by the 'shapley' function}
+\item{wmshap}{object of class 'shapley', as returned by the 'shapley' function}
 
 \item{domains}{character list, specifying the domains for grouping the features'
 contributions. Domains are clusters of features' names, that
@@ -111,7 +112,7 @@ This function applies different criteria to visualize SHAP contributions
                  Group2 = c("x25", "x23", "x6", "x27"),
                  Group3 = c("x28", "x26"))
 
-  hmda.domain(shapley = wmshap,
+  hmda.domain(wmshap = wmshap,
               plot = "bar",
               domains = domains,
               print = TRUE)

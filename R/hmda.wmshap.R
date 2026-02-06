@@ -170,7 +170,7 @@ hmda.wmshap <- function(models,
                         cutoff = 0.01,
                         top_n_features = NULL,
                         n_models = 10,
-                        sample_size = nrow(newdata)
+                        sample_size = NULL
                         #normalize_to = "upperCI"
 ) {
   return(
@@ -186,7 +186,7 @@ hmda.wmshap <- function(models,
             cutoff = cutoff,
             top_n_features = top_n_features,
             n_models = n_models,
-            sample_size = nrow(newdata)
+            sample_size = sample_size
             #normalize_to = "upperCI"
             )
   )

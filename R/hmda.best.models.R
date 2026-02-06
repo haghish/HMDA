@@ -73,17 +73,30 @@
 #' @importFrom utils head
 #' @export
 #' @author E. F. Haghish
-hmda.best.models <- function(df, n_models = 1) {
+hmda.best.models <- function(df,
+                             n_models = NULL,
+                             metrics = c("logloss", "mae", "mse", "rmse", "rmsle",
+                                         "mean_per_class_error", "auc", "aucpr",
+                                         "r2", "accuracy", "f1", "mcc", "f2"),
+                             distance_percentage = NULL,
+                             hyperparam = FALSE
+) {
 
   if (!inherits(df, "hmda.grid.analysis")) {
     warning("'df' is not of class 'hmda.grid.analysis'... watch out!")
   }
 
-  # Define known performance metrics and their optimization directions
-  known_metrics <- c("logloss", "mae", "mse", "rmse", "rmsle",
-                     "mean_per_class_error", "auc", "aucpr",
-                     "r2", "accuracy", "f1", "mcc", "f2")
+  if (!is.null(n_models) & !is.null(distance_percentage)) {
+    stop("either specify 'n_models' or 'distance_percentage'")
+  }
+  else if (is.null(n_models) & is.null(distance_percentage)) {
+    n_models <- 1
+  }
 
+  result <- NULL
+  sort_direction_list <- NULL
+
+  # Define known performance metrics and their optimization directions
   directions <- c(
     logloss = "minimize",
     mae = "minimize",
@@ -100,6 +113,24 @@ hmda.best.models <- function(df, n_models = 1) {
     f2 = "maximize"
   )
 
+  sort_direction <- c(
+    logloss = FALSE,
+    mae = FALSE,
+    mse = FALSE,
+    rmse = FALSE,
+    rmsle = FALSE,
+    mean_per_class_error = FALSE,
+    auc = TRUE,
+    aucpr = TRUE,
+    r2 = TRUE,
+    accuracy = TRUE,
+    f1 = TRUE,
+    mcc = TRUE,
+    f2 = TRUE
+  )
+
+  #directions <- directions[directions %in% metrics]
+
   # Check for the existence of the model_ids column
   if (!"model_ids" %in% names(df)) {
     stop("The data frame must contain a 'model_ids' column.")
@@ -109,35 +140,75 @@ hmda.best.models <- function(df, n_models = 1) {
   best_model_ids <- c()
 
   # Loop over each known metric and determine the top n_models best model IDs
-  for (metric in known_metrics) {
-    if (metric %in% names(df)) {
-      vals <- df[[metric]]
+  for (met in metrics) {
+    if (met %in% names(df)) {
+      vals <- df[[met]]
       if (all(is.na(vals))) next  # Skip metric if all values are NA
 
-      dir <- directions[[metric]]
+      dir <- directions[[met]]
       if (is.null(dir)) dir <- "minimize"
 
       # Order indices according to performance (top n_models)
       if (dir == "maximize") {
         ordered_idx <- order(vals, decreasing = TRUE)
+        sort_direction_list <- c(sort_direction_list, TRUE)
       } else {
         ordered_idx <- order(vals, decreasing = FALSE)
+        sort_direction_list <- c(sort_direction_list, FALSE)
       }
 
-      top_idx <- head(ordered_idx, n_models)
-      best_model_ids <- c(best_model_ids, df$model_ids[top_idx])
+      # Select the models for each metric
+      if (!is.null(n_models)) {
+        top_idx <- head(ordered_idx, n_models)
+        best_model_ids <- c(best_model_ids, df$model_ids[top_idx])
+      }
+      else if (!is.null(distance_percentage)) {
+        if (dir == "maximize") {
+          best_value <- max(df[[met]], na.rm = TRUE)
+          best_model_ids <- c(best_model_ids, df$model_ids[which(df[[met]] >= best_value * distance_percentage)])
+        }
+        else {
+          best_value <- min(df[[met]], na.rm = TRUE)
+          best_model_ids <- c(best_model_ids, df$model_ids[which(df[[met]] <= best_value * (1-distance_percentage))])
+        }
+      }
     }
   }
 
-  # Get the unique union of best model IDs
-  best_model_ids <- unique(best_model_ids)
+  # # Get the unique union of best model IDs
+  # best_model_ids <- unique(best_model_ids)
 
   # Determine which known metric columns exist in df
-  existing_metrics <- intersect(known_metrics, names(df))
+  existing_metrics <- intersect(metrics, names(df))
+
+  # print(df[df$model_ids %in% best_model_ids, c("model_ids", existing_metrics), drop = FALSE])
 
   # Subset the original data frame for the best models and only include
   # the model_ids and the performance metric columns.
-  result <- df[df$model_ids %in% best_model_ids, c("model_ids", existing_metrics), drop = FALSE]
+  if (hyperparam) result <- df[df$model_ids %in% best_model_ids, , drop = FALSE]
+  else result <- df[df$model_ids %in% best_model_ids, c("model_ids", existing_metrics), drop = FALSE]
+
+
+  # sort the columns for all the existing_metrics columns in order
+  # ==========================================================
+  # result <- result[with(result, order(existing_metrics)), ]
+  order_by_cols <- function(df, cols, decreasing = FALSE, na.last = TRUE) {
+    stopifnot(all(cols %in% names(df)))
+    if (length(decreasing) == 1L) decreasing <- rep(decreasing, length(cols))
+    stopifnot(length(decreasing) == length(cols))
+
+    keys <- Map(function(col, dec) {
+      k <- xtfrm(df[[col]])     # numeric ranking for any type
+      if (dec) -k else k
+    }, cols, decreasing)
+
+    ord <- do.call(order, c(keys, list(na.last = na.last)))
+    df[ord, , drop = FALSE]
+  }
+  result <- order_by_cols(result, existing_metrics, decreasing = sort_direction_list)
+  # ord <- do.call(order, c(as.list(result[existing_metrics]), list(na.last = TRUE)))
+  # result <- result[ord, , drop = FALSE]
+
 
   # Drop metric columns that are entirely NA in the resulting subset
   for (col in existing_metrics) {
@@ -148,3 +219,6 @@ hmda.best.models <- function(df, n_models = 1) {
 
   return(result)
 }
+
+
+

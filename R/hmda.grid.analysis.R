@@ -87,7 +87,8 @@
 hmda.grid.analysis <- function(grid,
                                performance_metrics =
                                  c("logloss", "mse", "rmse", "rmsle", "auc",
-                                   "aucpr", "mean_per_class_error", "r2"),
+                                   "aucpr", "mean_per_class_error", "r2",
+                                   "f1","f2","mcc","kappa"),
                                sort_by = "logloss") {
 
   # prepare the performance dataset
@@ -118,12 +119,13 @@ hmda.grid.analysis <- function(grid,
       else if (j == "rmse") try(performance[i, j] <- h2o.rmse(MODEL, xval = TRUE), silent = TRUE)
 
       # for thresholds metrics...
-      else if (j %in% c("f1","f2","mcc","kappa")) {
+      else if (j %in% c("mean_per_class_error","f2","mcc","kappa")) {
         PERF <- h2o.performance(model = MODEL, xval= TRUE)
-        if (j == "f1") try(performance[i, j] <- h2o.F1(PERF), silent = TRUE)
-        else if (j == "f2") try(performance[i, j] <- h2o.F2(PERF), silent = TRUE)
-        else if (j == "mcc") try(performance[i, j] <- h2o.mcc(PERF), silent = TRUE)
-        else if (j == "kappa") try(performance[i, j] <- h2otools::kappa(PERF), silent = TRUE)
+        # if (j == "f1") try(performance[i, j] <- h2o.F1(PERF), silent = TRUE)
+        if (j == "mean_per_class_error") try(performance[i, j] <- PERF@metrics$mean_per_class_error, silent = TRUE)
+        else if (j == "f2") try(performance[i, j] <- PERF@metrics$max_criteria_and_metric_scores[2,3], silent = TRUE)
+        else if (j == "mcc") try(performance[i, j] <- PERF@metrics$max_criteria_and_metric_scores[8,3], silent = TRUE)
+        else if (j == "kappa") try(performance[i, j] <- h2otools::kappa(PER, max=TRUE), silent = TRUE)
       }
     }
   }
