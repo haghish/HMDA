@@ -16,7 +16,7 @@ hmda.wmshap(
   cutoff = 0.01,
   top_n_features = NULL,
   n_models = 10,
-  sample_size = nrow(newdata)
+  sample_size = NULL
 )
 }
 \arguments{
