@@ -1,6 +1,6 @@
 #' @title compute and plot weighted mean SHAP contributions at group level (factors or domains)
 #' @description This function applies different criteria to visualize SHAP contributions
-#' @param shapley object of class 'shapley', as returned by the 'shapley' function
+#' @param wmshap object of class 'shapley', as returned by the 'shapley' function
 #' @param plot character, specifying the type of the plot, which can be either
 #'            'bar', 'waffle', or 'shap'. The default is 'bar'.
 #' @param domains character list, specifying the domains for grouping the features'
@@ -93,7 +93,7 @@
 #'                  Group2 = c("x25", "x23", "x6", "x27"),
 #'                  Group3 = c("x28", "x26"))
 #'
-#'   hmda.domain(shapley = wmshap,
+#'   hmda.domain(wmshap = wmshap,
 #'               plot = "bar",
 #'               domains = domains,
 #'               print = TRUE)
@@ -102,21 +102,23 @@
 #' @author E. F. Haghish
 
 
-hmda.domain <- function(shapley,
+hmda.domain <- function(wmshap,
                         domains,
                         plot = "bar",
                         legendstyle = "continuous",
                         scale_colour_gradient = NULL, #this is a BUG because it is not implemented
                         # COLORCODE IS MISSING :(
-                        print = FALSE) {
+                        print = FALSE,
+                        xlab = "Factors") {
 
   return(
-    shapley.domain(shapley = shapley,
+    shapley.domain(shapley = wmshap,
              domains = domains,
              plot = plot,
              legendstyle = legendstyle,
              scale_colour_gradient = scale_colour_gradient, #this is a BUG because it is not implemented
              # COLORCODE IS MISSING :(
-             print = print)
+             print = print,
+             xlab = xlab)
   )
 }
