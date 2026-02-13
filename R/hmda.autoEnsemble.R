@@ -52,7 +52,7 @@
 #'
 #' @details
 #'   This wrapper function integrates with the HMDA package workflow to build a
-#'   stacked ensemble model from a set of base H2O models. It calls the
+#'   stacked ensemble model from a set of base models. It calls the
 #'   \code{ensemble()} function from the \pkg{autoEnsemble} package to construct the
 #'   ensemble. The function is designed to work within HMDA's framework, where base
 #'   models are generated via grid search or AutoML. For more details on the autoEnsemble
