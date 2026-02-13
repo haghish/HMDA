@@ -1,24 +1,28 @@
 #' @title Select Best Models Across All Models in HMDA Grid
-#' @description Scans a HMDA grid analysis data frame for H2O performance
-#'   metric columns and, for each metric, selects the top \code{n_models}
-#'   best-performing models based on the proper optimization direction
-#'   (i.e., lower values are better for some metrics and higher values
-#'   are better for others). The function then returns a summary data frame
-#'   showing the union of these best models (without duplication) along with
-#'   the corresponding metric values that led to their selection.
+#' @description
+#' Scans an HMDA grid analysis data frame for performance metric columns and, for each metric,
+#' selects the best-performing models according to the correct optimization direction
+#' (lower is better for some metrics; higher is better for others). The function returns a
+#' subset of the input data frame containing the union of selected model IDs.
 #'
 #' @param df         A data frame of class \code{"hmda.grid.analysis"} containing
 #'                   model performance results. It must include a column named
-#'                   \code{model_ids} and one or more numeric columns representing
-#'                   H2O performance metrics (e.g., \code{logloss}, \code{auc},
-#'                   \code{rmse}, etc.).
+#'                   \code{model_ids}.
 #' @param n_models   Integer. The number of top models to select per metric.
-#'                   Default is 1.
+#'                   If both \code{n_models} and \code{distance_percentage} are \code{NULL},
+#'                   defaults to 1.
+#' @param metrics Character vector of performance metric column names to consider. Only metrics present
+#'   in \code{df} are used.
+#' @param distance_percentage Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
+#'   a given percentage of the best value for each metric (direction-aware). You must specify either
+#'   \code{n_models} or \code{distance_percentage}, not both.
+#' @param hyperparam Logical. If \code{TRUE}, returns all columns for the selected models (including
+#'   hyperparameters). If \code{FALSE}, returns only \code{model_ids} plus the selected metric columns.
 #'
-#' @return A data frame containing the rows corresponding to the union of
-#'         best model IDs (across all metrics) and the columns for
-#'         \code{model_ids} plus the performance metrics that are present
-#'         in the data frame.
+#'
+#' @return A data frame containing the union of selected models across all considered metrics.
+#'   If \code{hyperparam = FALSE}, the output includes \code{model_ids} and the metric columns found in \code{df}.
+#'   If \code{hyperparam = TRUE}, the output includes all columns from \code{df} for the selected models.
 #'
 #' @details
 #'   The function uses a predefined set of H2O performance metrics along with
@@ -29,13 +33,6 @@
 #'     \item{auc, aucpr, r2, accuracy, f1, mcc, f2}{Higher values are better.}
 #'   }
 #'
-#'   For each metric in the predefined list that exists in \code{df} and is not
-#'   entirely NA, the function orders the values (using \code{order()}) according
-#'   to whether lower or higher values indicate better performance. It then selects
-#'   the top \code{n_models} model IDs for that metric. The union of these model IDs
-#'   is used to subset the original data frame. The returned data frame includes
-#'   the \code{model_ids} column and the performance metric columns (from the
-#'   predefined list) that were found in the input data frame.
 #'
 #' @examples
 #' \dontrun{
@@ -68,6 +65,9 @@
 #'
 #'   # Return the best 2 models according to each metric
 #'   hmda.best.models(grid_performance, n_models = 2)
+#'
+#'   # return all models with performance metric as high as 98% of the best model, for each metric
+#'   hmda.best.models(grid_performance, distance_percentage = 0.98)
 #' }
 #'
 #' @importFrom utils head
@@ -75,13 +75,14 @@
 #' @author E. F. Haghish
 hmda.best.models <- function(df,
                              n_models = NULL,
+                             distance_percentage = NULL,
                              metrics = c("logloss", "mae", "mse", "rmse", "rmsle",
                                          "mean_per_class_error", "auc", "aucpr",
                                          "r2", "accuracy", "f1", "mcc", "f2"),
-                             distance_percentage = NULL,
-                             hyperparam = FALSE
-) {
+                             hyperparam = FALSE) {
 
+  # Syntax check
+  # ============================================================
   if (!inherits(df, "hmda.grid.analysis")) {
     warning("'df' is not of class 'hmda.grid.analysis'... watch out!")
   }
@@ -93,8 +94,14 @@ hmda.best.models <- function(df,
     n_models <- 1
   }
 
-  result <- NULL
-  sort_direction_list <- NULL
+  if (!"model_ids" %in% names(df)) {
+    stop("The data frame must contain a 'model_ids' column.")
+  }
+
+  sort_direction_map <- c()
+
+  # Initialize a vector to hold best model IDs across metrics
+  best_model_ids <- c()
 
   # Define known performance metrics and their optimization directions
   directions <- c(
@@ -113,31 +120,23 @@ hmda.best.models <- function(df,
     f2 = "maximize"
   )
 
-  sort_direction <- c(
-    logloss = FALSE,
-    mae = FALSE,
-    mse = FALSE,
-    rmse = FALSE,
-    rmsle = FALSE,
-    mean_per_class_error = FALSE,
-    auc = TRUE,
-    aucpr = TRUE,
-    r2 = TRUE,
-    accuracy = TRUE,
-    f1 = TRUE,
-    mcc = TRUE,
-    f2 = TRUE
-  )
+  # sort_direction <- c(
+  #   logloss = FALSE,
+  #   mae = FALSE,
+  #   mse = FALSE,
+  #   rmse = FALSE,
+  #   rmsle = FALSE,
+  #   mean_per_class_error = FALSE,
+  #   auc = TRUE,
+  #   aucpr = TRUE,
+  #   r2 = TRUE,
+  #   accuracy = TRUE,
+  #   f1 = TRUE,
+  #   mcc = TRUE,
+  #   f2 = TRUE
+  # )
 
   #directions <- directions[directions %in% metrics]
-
-  # Check for the existence of the model_ids column
-  if (!"model_ids" %in% names(df)) {
-    stop("The data frame must contain a 'model_ids' column.")
-  }
-
-  # Initialize a vector to hold best model IDs across metrics
-  best_model_ids <- c()
 
   # Loop over each known metric and determine the top n_models best model IDs
   for (met in metrics) {
@@ -151,10 +150,10 @@ hmda.best.models <- function(df,
       # Order indices according to performance (top n_models)
       if (dir == "maximize") {
         ordered_idx <- order(vals, decreasing = TRUE)
-        sort_direction_list <- c(sort_direction_list, TRUE)
+        sort_direction_map <- c(sort_direction_map, TRUE)
       } else {
         ordered_idx <- order(vals, decreasing = FALSE)
-        sort_direction_list <- c(sort_direction_list, FALSE)
+        sort_direction_map <- c(sort_direction_map, FALSE)
       }
 
       # Select the models for each metric
@@ -169,7 +168,7 @@ hmda.best.models <- function(df,
         }
         else {
           best_value <- min(df[[met]], na.rm = TRUE)
-          best_model_ids <- c(best_model_ids, df$model_ids[which(df[[met]] <= best_value * (1-distance_percentage))])
+          best_model_ids <- c(best_model_ids, df$model_ids[which(df[[met]] <= best_value * (1+distance_percentage))])
         }
       }
     }
@@ -205,7 +204,7 @@ hmda.best.models <- function(df,
     ord <- do.call(order, c(keys, list(na.last = na.last)))
     df[ord, , drop = FALSE]
   }
-  result <- order_by_cols(result, existing_metrics, decreasing = sort_direction_list)
+  result <- order_by_cols(result, existing_metrics, decreasing = sort_direction_map)
   # ord <- do.call(order, c(as.list(result[existing_metrics]), list(na.last = TRUE)))
   # result <- result[ord, , drop = FALSE]
 
