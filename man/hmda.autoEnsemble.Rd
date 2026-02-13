@@ -22,18 +22,15 @@ hmda.autoEnsemble(
 )
 }
 \arguments{
-\item{models}{A grid object, such as HMDA grid, or a character vector of H2O model IDs.
-The \code{h2o.get_ids} function from \pkg{h2otools} can be used to extract model
-IDs from grids.}
+\item{models}{A grid object (e.g., an H2O grid / HMDA grid) or a character vector of model IDs.}
 
 \item{training_frame}{An H2OFrame (or data frame already uploaded to the H2O server)
 that contains the training data used to build the base models.}
 
-\item{newdata}{An H2OFrame (or data frame already uploaded to the H2O server) to be used
-for evaluating the ensemble. If not specified, performance on the training data is used
-(for instance, cross-validation performance).}
+\item{newdata}{Optional \code{H2OFrame} used for evaluating the ensemble during the stacking.}
 
-\item{family}{A character string specifying the model family.}
+\item{family}{Character string specifying the modeling family (e.g., \code{"binary"}).
+See the autoEnsemble package for full documentation.}
 
 \item{strategy}{A character vector specifying the ensemble strategy. The available
 strategy is \code{"search"} (default). The \code{"search"} strategy searches for
@@ -80,13 +77,13 @@ A list containing:
   }
 }
 \description{
-This function is a wrapper within the HMDA package that
-  builds a stacked ensemble model by combining multiple H2O models. It
+Wrapper function in the HMDA package that
+  builds a stacked ensemble model by combining multiple models. It
   leverages the \pkg{autoEnsemble} package to stack a set of trained models
   (e.g., from HMDA grid) into a stronger meta-learner. For more
   details on autoEnsemble, please see the GitHub repository at
   \url{https://github.com/haghish/autoEnsemble} and the CRAN package of
-  autoEnsemble R package.
+  \pkg{autoEnsemble} R package.
 }
 \details{
 This wrapper function integrates with the HMDA package workflow to build a
