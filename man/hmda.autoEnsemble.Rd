@@ -134,7 +134,7 @@ This wrapper function integrates with the HMDA package workflow to build a
                           nfolds = 10,
                           ntrees = 100,
                           seed = 1,
-                          hyper_params = gbm_params1)
+                          hyper_params = params)
 
   # Assess the performances of the models
   grid_performance <- hmda.grid.analysis(hmda_grid1)
