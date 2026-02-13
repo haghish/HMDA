@@ -9,9 +9,8 @@
 #'            It must include a column named \code{"model_id"} and one
 #'            or more numeric columns for performance metrics.
 #'
-#' @return An integer or character vector of unique \code{model_id}
-#'         values corresponding to the best model for each performance
-#'         metric.
+#' @return A character vector of unique \code{model_id} values corresponding to the best model(s)
+#'   for each detected performance metric.
 #'
 #' @details The function first detects numeric columns (other than
 #'         \code{"model_id"}) as performance metrics. It then uses a
