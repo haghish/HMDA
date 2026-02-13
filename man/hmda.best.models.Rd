@@ -7,36 +7,41 @@
 hmda.best.models(
   df,
   n_models = NULL,
+  distance_percentage = NULL,
   metrics = c("logloss", "mae", "mse", "rmse", "rmsle", "mean_per_class_error", "auc",
     "aucpr", "r2", "accuracy", "f1", "mcc", "f2"),
-  distance_percentage = NULL,
   hyperparam = FALSE
 )
 }
 \arguments{
 \item{df}{A data frame of class \code{"hmda.grid.analysis"} containing
 model performance results. It must include a column named
-\code{model_ids} and one or more numeric columns representing
-H2O performance metrics (e.g., \code{logloss}, \code{auc},
-\code{rmse}, etc.).}
+\code{model_ids}.}
 
 \item{n_models}{Integer. The number of top models to select per metric.
-Default is 1.}
+If both \code{n_models} and \code{distance_percentage} are \code{NULL},
+defaults to 1.}
+
+\item{distance_percentage}{Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
+a given percentage of the best value for each metric (direction-aware). You must specify either
+\code{n_models} or \code{distance_percentage}, not both.}
+
+\item{metrics}{Character vector of performance metric column names to consider. Only metrics present
+in \code{df} are used.}
+
+\item{hyperparam}{Logical. If \code{TRUE}, returns all columns for the selected models (including
+hyperparameters). If \code{FALSE}, returns only \code{model_ids} plus the selected metric columns.}
 }
 \value{
-A data frame containing the rows corresponding to the union of
-        best model IDs (across all metrics) and the columns for
-        \code{model_ids} plus the performance metrics that are present
-        in the data frame.
+A data frame containing the union of selected models across all considered metrics.
+  If \code{hyperparam = FALSE}, the output includes \code{model_ids} and the metric columns found in \code{df}.
+  If \code{hyperparam = TRUE}, the output includes all columns from \code{df} for the selected models.
 }
 \description{
-Scans a HMDA grid analysis data frame for H2O performance
-  metric columns and, for each metric, selects the top \code{n_models}
-  best-performing models based on the proper optimization direction
-  (i.e., lower values are better for some metrics and higher values
-  are better for others). The function then returns a summary data frame
-  showing the union of these best models (without duplication) along with
-  the corresponding metric values that led to their selection.
+Scans an HMDA grid analysis data frame for performance metric columns and, for each metric,
+selects the best-performing models according to the correct optimization direction
+(lower is better for some metrics; higher is better for others). The function returns a
+subset of the input data frame containing the union of selected model IDs.
 }
 \details{
 The function uses a predefined set of H2O performance metrics along with
@@ -46,14 +51,6 @@ The function uses a predefined set of H2O performance metrics along with
           are better.}
     \item{auc, aucpr, r2, accuracy, f1, mcc, f2}{Higher values are better.}
   }
-
-  For each metric in the predefined list that exists in \code{df} and is not
-  entirely NA, the function orders the values (using \code{order()}) according
-  to whether lower or higher values indicate better performance. It then selects
-  the top \code{n_models} model IDs for that metric. The union of these model IDs
-  is used to subset the original data frame. The returned data frame includes
-  the \code{model_ids} column and the performance metric columns (from the
-  predefined list) that were found in the input data frame.
 }
 \examples{
 \dontrun{
@@ -86,6 +83,9 @@ The function uses a predefined set of H2O performance metrics along with
 
   # Return the best 2 models according to each metric
   hmda.best.models(grid_performance, n_models = 2)
+
+  # return all models with performance metric as high as 98\% of the best model, for each metric
+  hmda.best.models(grid_performance, distance_percentage = 0.98)
 }
 
 }
