@@ -1,8 +1,11 @@
 #' @title Check Exploratory Factor Analysis Suitability
-#' @description Checks if specified features in a dataframe meet criteria for performing exploratory factor analysis (EFA).
-#' This function verifies that each feature exists, is numeric, has sufficient variability,
-#' and does not have an excessive proportion of missing values. For multiple features, it also
-#' assesses the full rank of the correlation matrix and the level of intercorrelation among features.
+#' @description
+#' Checks whether the specified features in a data frame meet basic criteria for performing
+#' exploratory factor analysis (EFA). The function verifies that each feature exists, is numeric,
+#' has sufficient variability, and does not have an excessive proportion of missing values.
+#' For multiple features, it also evaluates whether the correlation matrix is full rank and whether
+#' each feature has at least one sufficiently strong intercorrelation with another feature.
+#'
 #' @author E. F. Haghish
 #'
 #' @param df A dataframe containing the features.
@@ -11,6 +14,8 @@
 #'   values required for a feature. Default is 5.
 #' @param min_intercorrelation A numeric threshold for the minimum acceptable
 #'   intercorrelation among features. (Note: this parameter is not used explicitly in the current implementation.) Default is 0.3.
+#' @param max_missing_rate A numeric threshold for maximum missing values. Features
+#'                         that have a higher missing rate than this threshold will be flagged.
 #' @param verbose Logical; if \code{TRUE}, a confirmation message is printed when all
 #'   features appear suitable. Default is \code{FALSE}.
 #'
@@ -59,6 +64,7 @@ check_efa <- function(df,
                       features,
                       min_unique = 5,
                       min_intercorrelation = .3,
+                      max_missing_rate = 0.05,
                       verbose = FALSE) {
 
   # Vector to store messages for unsuitable features
@@ -95,7 +101,7 @@ check_efa <- function(df,
 
     # Check for a high proportion of missing values (threshold: 20%)
     # ====================================================
-    if (mean(is.na(col_data)) > 0.2) {
+    if (mean(is.na(col_data)) > max_missing_rate) {
       unsuitable_messages <- c(
         unsuitable_messages,
         paste0("Feature '", feature, "' has more than 20% missing values.")
@@ -106,7 +112,7 @@ check_efa <- function(df,
   if (length(minimum_unique_observations) > 0) {
     unsuitable_messages <- c(
       unsuitable_messages,
-      paste0("The following features have constant or near-constant values. Make sure it is not categorical!:\n '",
+      paste0("The following features have constant or near-constant values. Make sure it is not categorical!:\n ",
              paste0(minimum_unique_observations, collapse = " "))
     )
   }
@@ -133,14 +139,14 @@ check_efa <- function(df,
     #p.mat <- cor.mtest(efDf)
 
     # Identify items that have low correlations with other items
-    N <- abs(cor_matrix) >= .4
+    N <- abs(cor_matrix) >= min_intercorrelation
     intercorrelations <- rowSums(N) - 1 # -1 because the item is always correlated with itself
 
     poor_features <- names(intercorrelations[intercorrelations==0])
     if (length(poor_features) > 0) {
       unsuitable_messages <- c(
         unsuitable_messages,
-        paste0("The following features have low intercorrelations:\n '", paste0(poor_features, collapse = " "))
+        paste0("The following features have low intercorrelations:\n ", paste0(poor_features, collapse = " "))
       )
     }
   }
