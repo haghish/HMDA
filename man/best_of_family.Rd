@@ -12,9 +12,8 @@ It must include a column named \code{"model_id"} and one
 or more numeric columns for performance metrics.}
 }
 \value{
-An integer or character vector of unique \code{model_id}
-        values corresponding to the best model for each performance
-        metric.
+A character vector of unique \code{model_id} values corresponding to the best model(s)
+  for each detected performance metric.
 }
 \description{
 Detects all performance metric columns in a data frame,
