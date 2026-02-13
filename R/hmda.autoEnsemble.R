@@ -1,28 +1,20 @@
 #' @title Build Stacked Ensemble Model Using autoEnsemble R package
-#' @description This function is a wrapper within the HMDA package that
-#'   builds a stacked ensemble model by combining multiple H2O models. It
+#' @description Wrapper function in the HMDA package that
+#'   builds a stacked ensemble model by combining multiple models. It
 #'   leverages the \pkg{autoEnsemble} package to stack a set of trained models
 #'   (e.g., from HMDA grid) into a stronger meta-learner. For more
 #'   details on autoEnsemble, please see the GitHub repository at
 #'   \url{https://github.com/haghish/autoEnsemble} and the CRAN package of
-#'   autoEnsemble R package.
+#'   \pkg{autoEnsemble} R package.
 #'
-#' @importFrom utils setTxtProgressBar txtProgressBar
-#' @importFrom h2o h2o.stackedEnsemble h2o.getModel h2o.auc h2o.aucpr h2o.mcc
-#'             h2o.F2 h2o.mean_per_class_error h2o.giniCoef h2o.accuracy
-# @importFrom h2otools h2o.get_ids
-#' @importFrom curl curl
 #' @importFrom autoEnsemble ensemble
 #'
-#' @param models A grid object, such as HMDA grid, or a character vector of H2O model IDs.
-#'   The \code{h2o.get_ids} function from \pkg{h2otools} can be used to extract model
-#'   IDs from grids.
+#' @param models A grid object (e.g., an H2O grid / HMDA grid) or a character vector of model IDs.
 #' @param training_frame An H2OFrame (or data frame already uploaded to the H2O server)
 #'   that contains the training data used to build the base models.
-#' @param newdata An H2OFrame (or data frame already uploaded to the H2O server) to be used
-#'   for evaluating the ensemble. If not specified, performance on the training data is used
-#'   (for instance, cross-validation performance).
-#' @param family A character string specifying the model family.
+#' @param newdata Optional \code{H2OFrame} used for evaluating the ensemble during the stacking.
+#' @param family Character string specifying the modeling family (e.g., \code{"binary"}).
+#'               See the autoEnsemble package for full documentation.
 #' @param strategy A character vector specifying the ensemble strategy. The available
 #'   strategy is \code{"search"} (default). The \code{"search"} strategy searches for
 #'   the best combination of top-performing diverse models.
@@ -138,8 +130,8 @@ hmda.autoEnsemble <- function(models,
                               seed = -1,
                               verbatim = FALSE) {
 
-  return(
-    ensemble(
+
+  ensemble(
       models = models,
       training_frame = training_frame,
       newdata = newdata,
@@ -154,6 +146,5 @@ hmda.autoEnsemble <- function(models,
       stop_metric = stop_metric,
       seed = seed,
       verbatim = verbatim
-    )
   )
 }
