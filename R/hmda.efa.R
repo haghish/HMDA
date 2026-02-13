@@ -1,5 +1,3 @@
-#' @importFrom psych fa.diagram fa.sort factor.scores omega
-#' @importFrom h2otools capture
 #' @title Perform Exploratory Factor Analysis with HMDA
 #' @description Performs exploratory factor analysis (EFA) on a specified set
 #'   of features from a data frame using the \pkg{psych} package. The function
@@ -107,7 +105,9 @@
 #   # View the factor correlation matrix
 #   print(efa_results$factor_correlations)
 #
-#
+#' @importFrom psych fa.parallel fa.diagram fa.sort factor.scores omega
+#' @importFrom h2otools capture
+#' @importFrom utils capture.output
 #' @export
 #' @author E. F. Haghish
 
@@ -131,7 +131,9 @@ hmda.efa <- function(df,
 
   # Check the data for items not suitable for efa
   # ====================================================
-  if (is.null(nfactors) & !parallel.analysis) stop("either run parallel.analysis or specify number of factors in 'nfactor' argument")
+  if (is.null(nfactors) & !parallel.analysis) {
+    stop("either run parallel.analysis or specify number of factors in 'nfactor' argument")
+  }
 
   # Function to reverse the variable's direction
   # ====================================================
@@ -229,29 +231,3 @@ hmda.efa <- function(df,
 
   return(results)
 }
-
-# importantFeatures <- hmda.features(wmshap, method = "mean", cutoff = 0.01)
-# importantFeatures <- importantFeatures[importantFeatures %in% colnames(raw)]
-# check_efa(raw, importantFeatures)
-#pa <- psych::fa.parallel(raw[, importantFeatures], fa="fa", fm="minrank", plot=FALSE)
-
-# importantFeatures <- hmda.features(wmshap, method = "mean", cutoff = 0.008)
-# importantFeatures <- hmda.features(wmshap, top_n_features = 30)
-# importantFeatures <- hmda.features(wmshap, method = "lowerCI", cutoff = 0.1)
-
-# importantFeatures <- hmda.feature.selection(wmshap, method = "mean", cutoff = 0.005)
-# importantFeatures$important
-#
-# check_efa(df=raw, features = importantFeatures$important, min_intercorrelation = 0.1)
-
-# hmda.efa(df=raw, features = importantFeatures$important, nfactors = 10,
-#          minimum_loadings = 0.25,
-#          exclude_features = c("ParIn2_1", "Gende1_1", "AlcDe2_2", "AlcDe2_1", "PolA2n10",
-#                               "ParIn2_5", "ParJo1_4", "ParIn2_5"), algorithm = "ml")
-
-# importantFeatures <- hmda.feature.selection(wmshap, method = "mean", cutoff = 0.005)
-# hmda.efa(df=raw, features = importantFeatures$important, nfactors = 11, algorithm = "minrank",
-#          minimum_loadings = 0.3, dict = NULL,
-#          exclude_features = c("ParIn2_1", "Gende1_1", "AlcDe2_2", "AlcDe2_1", "PolA2n10",
-#                               "ParIn2_5", "ParJo1_4", "ParIn2_5", "Heigh1_1", "GmTy2_01"))
-#
