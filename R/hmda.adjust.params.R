@@ -1,5 +1,5 @@
 #' @title Adjust Hyperparameter Combinations
-#' @description This internal function prunes or expands a list of
+#' @description Prunes or expands a list of
 #'   hyperparameters so that the total number of model combinations,
 #'   computed as the product of the lengths of each parameter vector,
 #'   is near the desired target (\code{n_models}). It first prunes the
@@ -51,6 +51,21 @@
 #' @author E. F. Haghish
 
 hmda.adjust.params <- function(params, n_models) {
+
+  # Syntax check
+  # ============================================================
+  if (!is.list(params) || length(params) == 0L) {
+    stop("'params' must be a non-empty list of hyperparameter vectors.", call. = FALSE)
+  }
+  n_models <- as.integer(n_models)
+  if (is.na(n_models) || n_models < 1L) {
+    stop("'n_models' must be a positive integer.", call. = FALSE)
+  }
+  lens <- vapply(params, length, integer(1))
+  if (any(lens < 1L)) {
+    stop("All elements of 'params' must have length >= 1.", call. = FALSE)
+  }
+
   current_prod <- prod(sapply(params, length))
 
   # Simple loop to prune until we're near or below n_models
