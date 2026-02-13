@@ -9,6 +9,7 @@ check_efa(
   features,
   min_unique = 5,
   min_intercorrelation = 0.3,
+  max_missing_rate = 0.05,
   verbose = FALSE
 )
 }
@@ -23,6 +24,9 @@ values required for a feature. Default is 5.}
 \item{min_intercorrelation}{A numeric threshold for the minimum acceptable
 intercorrelation among features. (Note: this parameter is not used explicitly in the current implementation.) Default is 0.3.}
 
+\item{max_missing_rate}{A numeric threshold for maximum missing values. Features
+that have a higher missing rate than this threshold will be flagged.}
+
 \item{verbose}{Logical; if \code{TRUE}, a confirmation message is printed when all
 features appear suitable. Default is \code{FALSE}.}
 }
@@ -31,10 +35,11 @@ features appear suitable. Default is \code{FALSE}.}
   otherwise. In the latter case, messages detailing the issues are printed.
 }
 \description{
-Checks if specified features in a dataframe meet criteria for performing exploratory factor analysis (EFA).
-This function verifies that each feature exists, is numeric, has sufficient variability,
-and does not have an excessive proportion of missing values. For multiple features, it also
-assesses the full rank of the correlation matrix and the level of intercorrelation among features.
+Checks whether the specified features in a data frame meet basic criteria for performing
+exploratory factor analysis (EFA). The function verifies that each feature exists, is numeric,
+has sufficient variability, and does not have an excessive proportion of missing values.
+For multiple features, it also evaluates whether the correlation matrix is full rank and whether
+each feature has at least one sufficiently strong intercorrelation with another feature.
 }
 \details{
 The function performs several checks:
