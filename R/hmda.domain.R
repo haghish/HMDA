@@ -1,8 +1,15 @@
-#' @title compute and plot weighted mean SHAP contributions at group level (factors or domains)
-#' @description This function applies different criteria to visualize SHAP contributions
+#' @title Domain-level WMSHAP summary and plot
+#' @description
+#' #' Wrapper around \code{\link[shapley]{shapley.domain}} to compute and visualize
+#' weighted mean SHAP ratios (WMSHAP) at the domain/group/factor level. Domains are user-defined
+#' clusters of feature names (e.g., latent factors or conceptual groups). The function aggregates
+#' feature-level contributions into domain-level contributions and returns a plot and
+#' confidence intervals.
+#'
 #' @param wmshap object of class 'shapley', as returned by the 'shapley' function
 #' @param plot character, specifying the type of the plot, which can be either
-#'            'bar', 'waffle', or 'shap'. The default is 'bar'.
+#'            'bar' or 'wmshap'. The default is 'bar'.
+#' @param colorcode Character vector for specifying the color names for each domain in the plot.
 #' @param domains character list, specifying the domains for grouping the features'
 #'                contributions. Domains are clusters of features' names, that
 #'                can be used to compute WMSHAP at higher level, along with
@@ -10,20 +17,11 @@
 #'                better understand how a cluster of features influence the
 #'                outcome. Note that either of 'features' or 'domains' arguments
 #'                can be specified at the time.
-#' @param legendstyle character, specifying the style of the plot legend, which
-#'                    can be either 'continuous' (default) or 'discrete'. the
-#'                    continuous legend is only applicable to 'shap' plots and
-#'                    other plots only use 'discrete' legend.
-#' @param scale_colour_gradient character vector for specifying the color gradients
-#'                              for the plot.
+#' @param xlab Character label for WMSHAP domains or factors
 #' @param print logical. if TRUE, the WMSHAP summary table for the given row is printed
 #' @importFrom shapley shapley.domain
-#' @importFrom stats na.omit aggregate formula
-#' @importFrom h2o h2o.shap_summary_plot h2o.getModel
-#' @importFrom ggplot2 scale_colour_gradient2 theme guides guide_legend guide_colourbar
-#'             margin element_text theme_classic labs ylab xlab ggtitle
 #'
-#' @return ggplot object
+#' @return A ggplot object (invisibly returned) and, depending on \code{print}, prints the domain summary.
 #'
 #' @examples
 #' \dontrun{
@@ -58,16 +56,6 @@
 #'                           ntrees = 100,
 #'                           seed = 1,
 #'                           hyper_params = params)
-#'
-#'   # Assess the performances of the models
-#'   grid_performance <- hmda.grid.analysis(hmda_grid1)
-#'
-#'   # Return the best 2 models according to each metric
-#'   hmda.best.models(grid_performance, n_models = 2)
-#'
-#'   # build an autoEnsemble model & test it with the testing dataset
-#'   meta <- hmda.autoEnsemble(models = hmda_grid1, training_frame = train)
-#'   print(h2o.performance(model = meta$model, newdata = test))
 #'
 #'   # compute weighted mean shap values
 #'   wmshap <- hmda.wmshap(models = hmda_grid1,
@@ -105,19 +93,16 @@
 hmda.domain <- function(wmshap,
                         domains,
                         plot = "bar",
-                        legendstyle = "continuous",
-                        scale_colour_gradient = NULL, #this is a BUG because it is not implemented
                         # COLORCODE IS MISSING :(
                         print = FALSE,
+                        colorcode = NULL,
                         xlab = "Factors") {
 
   return(
     shapley.domain(shapley = wmshap,
              domains = domains,
              plot = plot,
-             legendstyle = legendstyle,
-             scale_colour_gradient = scale_colour_gradient, #this is a BUG because it is not implemented
-             # COLORCODE IS MISSING :(
+             colorcode = colorcode,
              print = print,
              xlab = xlab)
   )
