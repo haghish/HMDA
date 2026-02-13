@@ -2,15 +2,14 @@
 % Please edit documentation in R/hmda.domain.R
 \name{hmda.domain}
 \alias{hmda.domain}
-\title{compute and plot weighted mean SHAP contributions at group level (factors or domains)}
+\title{Domain-level WMSHAP summary and plot}
 \usage{
 hmda.domain(
   wmshap,
   domains,
   plot = "bar",
-  legendstyle = "continuous",
-  scale_colour_gradient = NULL,
   print = FALSE,
+  colorcode = NULL,
   xlab = "Factors"
 )
 }
@@ -26,23 +25,23 @@ outcome. Note that either of 'features' or 'domains' arguments
 can be specified at the time.}
 
 \item{plot}{character, specifying the type of the plot, which can be either
-'bar', 'waffle', or 'shap'. The default is 'bar'.}
-
-\item{legendstyle}{character, specifying the style of the plot legend, which
-can be either 'continuous' (default) or 'discrete'. the
-continuous legend is only applicable to 'shap' plots and
-other plots only use 'discrete' legend.}
-
-\item{scale_colour_gradient}{character vector for specifying the color gradients
-for the plot.}
+'bar' or 'wmshap'. The default is 'bar'.}
 
 \item{print}{logical. if TRUE, the WMSHAP summary table for the given row is printed}
+
+\item{colorcode}{Character vector for specifying the color names for each domain in the plot.}
+
+\item{xlab}{Character label for WMSHAP domains or factors}
 }
 \value{
-ggplot object
+A ggplot object (invisibly returned) and, depending on \code{print}, prints the domain summary.
 }
 \description{
-This function applies different criteria to visualize SHAP contributions
+#' Wrapper around \code{\link[shapley]{shapley.domain}} to compute and visualize
+weighted mean SHAP ratios (WMSHAP) at the domain/group/factor level. Domains are user-defined
+clusters of feature names (e.g., latent factors or conceptual groups). The function aggregates
+feature-level contributions into domain-level contributions and returns a plot and
+confidence intervals.
 }
 \examples{
 \dontrun{
@@ -77,16 +76,6 @@ This function applies different criteria to visualize SHAP contributions
                           ntrees = 100,
                           seed = 1,
                           hyper_params = params)
-
-  # Assess the performances of the models
-  grid_performance <- hmda.grid.analysis(hmda_grid1)
-
-  # Return the best 2 models according to each metric
-  hmda.best.models(grid_performance, n_models = 2)
-
-  # build an autoEnsemble model & test it with the testing dataset
-  meta <- hmda.autoEnsemble(models = hmda_grid1, training_frame = train)
-  print(h2o.performance(model = meta$model, newdata = test))
 
   # compute weighted mean shap values
   wmshap <- hmda.wmshap(models = hmda_grid1,
