@@ -18,7 +18,7 @@ A list of hyperparameter vectors that has been pruned or
         \code{n_models}.
 }
 \description{
-This internal function prunes or expands a list of
+Prunes or expands a list of
   hyperparameters so that the total number of model combinations,
   computed as the product of the lengths of each parameter vector,
   is near the desired target (\code{n_models}). It first prunes the
