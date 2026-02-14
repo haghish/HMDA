@@ -1,5 +1,4 @@
-#' @title Initialize or Restart H2O Cluster for HMDA
-#'        Analysis
+#' @title Initialize or Restart H2O Cluster for HMDA Analysis
 #' @description Initializes or restarts an H2O cluster configured for
 #'        Holistic Multimodel Domain Analysis. It sets up the cluster
 #'        with specified CPU threads, memory, and connection settings.
@@ -27,8 +26,8 @@
 #'              cluster to the local machine. Default is FALSE.
 #' @param ...   Additional arguments passed to h2o.init().
 #'
-#' @return An object representing the connection to the H2O
-#'         cluster.
+#' @return An \code{H2OConnection} object (invisibly printed by H2O) if \code{shutdown = FALSE};
+#'   otherwise returns \code{NULL}.
 #'
 #' @details The function sets JAVA_HOME if a Java path is provided.
 #'         It checks for an existing cluster via h2o.clusterInfo().
@@ -43,7 +42,7 @@
 #' @examples
 #' \dontrun{
 #'   # Example 1: Initialize the H2O cluster with default settings.
-#'   library(hmda)
+#'   library(HMDA)
 #'   hmda.init()
 #'
 #'   # Example 2: Initialize with specific settings such as Java path.
@@ -98,7 +97,7 @@ hmda.init <- function(cpu = -1,
   # Restart the server
   # ============================================================
   if (connection_exists) {
-    if (restart | shutdown) {
+    if (restart || shutdown) {
       try(h2o.shutdown(FALSE), silent = TRUE)
       Sys.sleep(5)
     }
