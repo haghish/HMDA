@@ -1,12 +1,9 @@
-#' @title Tune Hyperparameter Grid for HMDA Framework
-#' @description Generates a hyperparameter grid for a single tree-based
-#'   algorithm (either "drf" or "gbm") by running a grid search.
-#'   The function validates inputs, generates an
-#'   automatic grid ID for the grid (if not provided), and optionally
-#'   saves the grid to a recovery directory. The resulting grid object
-#'   contains all trained models and can be used for further analysis.
-#'   For scientific computing, saving the grid is highly recommended
-#'   to avoid future re-running the training!
+#' @title Tune a Cartesian Hyperparameter Grid in HMDA
+#' @description
+#' Runs an grid search for a single tree-based algorithm supported by HMDA
+#' (currently \code{"drf"} or \code{"gbm"}). The function validates inputs, optionally
+#' generates a grid ID, runs a Cartesian grid search, and (optionally) saves the grid
+#' for recovery and reproducibility.
 #'
 #' @param algorithm  Character. The algorithm to tune. Supported values
 #'                   are "drf" (Distributed Random Forest) and "gbm"
@@ -39,6 +36,9 @@
 #'
 #' @return An object of class \code{H2OGrid} containing the grid search
 #'         results.
+#'
+#' @seealso \code{\link{hmda.grid.analysis}}, \code{\link{hmda.best.models}}
+#'
 #'
 #' @details
 #'   The function executes the following steps:
