@@ -2,7 +2,7 @@
 % Please edit documentation in R/hmda.grid.R
 \name{hmda.grid}
 \alias{hmda.grid}
-\title{Tune Hyperparameter Grid for HMDA Framework}
+\title{Tune a Cartesian Hyperparameter Grid in HMDA}
 \usage{
 hmda.grid(
   algorithm = c("drf", "gbm"),
@@ -67,14 +67,10 @@ An object of class \code{H2OGrid} containing the grid search
         results.
 }
 \description{
-Generates a hyperparameter grid for a single tree-based
-  algorithm (either "drf" or "gbm") by running a grid search.
-  The function validates inputs, generates an
-  automatic grid ID for the grid (if not provided), and optionally
-  saves the grid to a recovery directory. The resulting grid object
-  contains all trained models and can be used for further analysis.
-  For scientific computing, saving the grid is highly recommended
-  to avoid future re-running the training!
+Runs an grid search for a single tree-based algorithm supported by HMDA
+(currently \code{"drf"} or \code{"gbm"}). The function validates inputs, optionally
+generates a grid ID, runs a Cartesian grid search, and (optionally) saves the grid
+for recovery and reproducibility.
 }
 \details{
 The function executes the following steps:
@@ -131,6 +127,9 @@ The function executes the following steps:
   hmda.best.models(grid_performance, n_models = 2)
 }
 
+}
+\seealso{
+\code{\link{hmda.grid.analysis}}, \code{\link{hmda.best.models}}
 }
 \author{
 E. F. Haghish
