@@ -147,7 +147,7 @@ hmda.wmshap.table <- function(wmshap,
                           split.tables = 120,
                           split.cells = 50) {
 
-  return(shapley::shapley.table(wmshap = wmshap,
+  return(shapley::shapley.table(shapley = wmshap,
                          method = method,
                          cutoff = cutoff,
                          round = round,
