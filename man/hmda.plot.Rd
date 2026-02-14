@@ -17,6 +17,9 @@ hmda.plot(
 )
 }
 \arguments{
+\item{wmshap}{object of class 'shapley', as returned by the 'shapley' function
+or hmda.wmshap function}
+
 \item{plot}{character, specifying the type of the plot, which can be either
 'bar', 'waffle', or 'shap'. The default is 'bar'.}
 
@@ -50,8 +53,6 @@ feature descriptions will be shown in the plot instead of the
 feature names as included in the dataset. To specify the labels,
 use the \code{c} function and list the labes, e.g.,
 \code{c(feature1 = label2, feature2 = label2, ...)}.}
-
-\item{shapley}{object of class 'shapley', as returned by the 'shapley' function}
 }
 \value{
 ggplot object
