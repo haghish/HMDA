@@ -38,6 +38,7 @@
 #'
 #' @export
 #' @author E. F. Haghish
+
 suggest_mtries <- function(p, family = c("classification", "regression")) {
 
   # Match argument for safety
