@@ -20,8 +20,8 @@ hmda.plot(
 \item{wmshap}{object of class 'shapley', as returned by the 'shapley' function
 or hmda.wmshap function}
 
-\item{plot}{character, specifying the type of the plot, which can be either
-'bar', 'waffle', or 'shap'. The default is 'bar'.}
+\item{plot}{Character. Plot type passed to \code{shapley.plot()}. Common options are
+\code{"bar"} and \code{"wmshap"}.}
 
 \item{method}{Character. The column name in \code{summaryShaps} used
 for feature selection. Default is \code{"mean"}, which
@@ -42,17 +42,14 @@ the 'cutoff' and 'method' arguments.}
 
 \item{legendstyle}{character, specifying the style of the plot legend, which
 can be either 'continuous' (default) or 'discrete'. the
-continuous legend is only applicable to 'shap' plots and
+continuous legend is only applicable to 'wmshap' plots and
 other plots only use 'discrete' legend.}
 
 \item{scale_colour_gradient}{character vector for specifying the color gradients
 for the plot.}
 
-\item{labels}{provide feature labels for items in the dataset. If specified,
-feature descriptions will be shown in the plot instead of the
-feature names as included in the dataset. To specify the labels,
-use the \code{c} function and list the labes, e.g.,
-\code{c(feature1 = label2, feature2 = label2, ...)}.}
+\item{labels}{Optional named character vector mapping feature names to display labels, e.g.,
+\code{c(feature1 = "Label 1", feature2 = "Label 2")}.}
 }
 \value{
 ggplot object
@@ -63,46 +60,53 @@ This function applies different criteria to visualize WMSHAP contributions
 \examples{
 
 \dontrun{
-# load the required libraries for building the base-learners and the ensemble models
-library(h2o)            #shapley supports h2o models
-library(shapley)
+  library(HMDA)
+  library(h2o)
+  hmda.init()
 
-# initiate the h2o server
-h2o.init(ignore_config = TRUE, nthreads = 2, bind_to_localhost = FALSE, insecure = TRUE)
+  # Import a sample binary outcome dataset into H2O
+  train <- h2o.importFile(
+  "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_train_10k.csv")
+  test <- h2o.importFile(
+  "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_test_5k.csv")
 
-# upload data to h2o cloud
-prostate_path <- system.file("extdata", "prostate.csv", package = "h2o")
-prostate <- h2o.importFile(path = prostate_path, header = TRUE)
+  # Identify predictors and response
+  y <- "response"
+  x <- setdiff(names(train), y)
 
-### H2O provides 2 types of grid search for tuning the models, which are
-### AutoML and Grid. Below, I demonstrate how weighted mean shapley values
-### can be computed for both types.
+  # For binary classification, response should be a factor
+  train[, y] <- as.factor(train[, y])
+  test[, y] <- as.factor(test[, y])
 
-set.seed(10)
+  params <- list(learn_rate = c(0.01, 0.1),
+                 max_depth = c(3, 5, 9),
+                 sample_rate = c(0.8, 1.0)
+  )
 
-#######################################################
-### PREPARE AutoML Grid (takes a couple of minutes)
-#######################################################
-# run AutoML to tune various models (GBM) for 60 seconds
-y <- "CAPSULE"
-prostate[,y] <- as.factor(prostate[,y])  #convert to factor for classification
-aml <- h2o.automl(y = y, training_frame = prostate, max_runtime_secs = 120,
-                 include_algos=c("GBM"),
+  # Train and validate a cartesian grid of GBMs
+  hmda_grid1 <- hmda.grid(algorithm = "gbm", x = x, y = y,
+                          grid_id = "hmda_grid1",
+                          training_frame = train,
+                          nfolds = 10,
+                          ntrees = 100,
+                          seed = 1,
+                          hyper_params = params)
 
-                 # this setting ensures the models are comparable for building a meta learner
-                 seed = 2023, nfolds = 10,
-                 keep_cross_validation_predictions = TRUE)
-
-### call 'shapley' function to compute the weighted mean and weighted confidence intervals
-### of SHAP values across all trained models.
-### Note that the 'newdata' should be the testing dataset!
-result <- shapley(models = aml, newdata = prostate, plot = TRUE)
+  # compute weighted mean shap values
+  wmshap <- hmda.wmshap(models = hmda_grid1,
+                        newdata = test,
+                        performance_metric = "aucpr",
+                        standardize_performance_metric = FALSE,
+                        performance_type = "xval",
+                        minimum_performance = 0,
+                        method = "mean",
+                        cutoff = 0.01,
+                        plot = TRUE)
 
 #######################################################
 ### PLOT THE WEIGHTED MEAN SHAP VALUES
 #######################################################
-
-shapley.plot(result, plot = "bar")
+hmda.plot(wmshap, plot = "bar")
 }
 }
 \author{
