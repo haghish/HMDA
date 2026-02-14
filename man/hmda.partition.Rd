@@ -16,8 +16,8 @@ hmda.partition(
 \arguments{
 \item{df}{A data frame to partition.}
 
-\item{y}{A string with the name of the outcome column.
-Must match a column in \code{df}.}
+\item{y}{Optional character string naming the outcome column in \code{df}. If provided and
+\code{df[[y]]} is factor/character, a stratified split is used.}
 
 \item{train}{A numeric value for the proportion of the
 training set.}
@@ -25,9 +25,8 @@ training set.}
 \item{test}{A numeric value for the proportion of the
 testing set.}
 
-\item{validation}{Optional numeric value for the proportion of
-the validation set. Default is \code{NULL}. If
-specified, train + test + validation must equal 1.}
+\item{validation}{Optional numeric. Proportion of observations assigned to the validation set.
+Default is \code{NULL}. If specified, \code{train + test + validation} must equal 1.}
 
 \item{seed}{A numeric seed for reproducibility.
 Default is 2025.}
