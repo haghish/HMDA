@@ -102,6 +102,11 @@ hmda.plot.metrics <- function(df,
 
   melted <- melt(df, id.vars = "model_ids", measure.vars = metrics)
 
+  # avoid Rstudio package check notes for unrecognized global variables
+  model_ids <- melted$model_ids
+  value     <- melted$value
+  variable  <- melted$variable
+
   trends_plot <- ggplot(melted, aes(x = model_ids, y = value, color = variable)) +
     scale_color_brewer(palette = "Set1") +
     geom_line(linewidth = 1, alpha = .3) +
