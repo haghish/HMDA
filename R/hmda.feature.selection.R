@@ -84,7 +84,7 @@
 #'                         nfolds = 10,
 #'                         ntrees = 100,
 #'                         seed = 1,
-#'                         hyper_params = gbm_params1)
+#'                         hyper_params = params)
 #'
 #' # Assess the performances of the models
 #' grid_performance <- hmda.grid.analysis(hmda_grid1)
@@ -109,7 +109,7 @@
 #'
 #' # identify the important features
 #' selected <- hmda.feature.selection(wmshap,
-#'                                    method = c("mean"),
+#'                                    method = "mean",
 #'                                    cutoff = 0.01)
 #' print(selected)
 #' }
@@ -118,7 +118,7 @@
 #' @author E. F. Haghish
 
 hmda.feature.selection <- function(wmshap,
-                          method = c("mean"),
+                          method = "mean",
                           cutoff = 0.01,
                           top_n_features = NULL) {
   # Exclude features that do not meet the criteria
