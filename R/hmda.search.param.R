@@ -15,15 +15,12 @@
 #'   for further manual tuning. Note that a good suggestion depends on the
 #'   extent of random search you carry out.
 #'
-#' @param algorithm  Character vector. The algorithm to include in the
+#' @param algorithm  Character. The algorithm to include in the
 #'                   random search. Supported values include "drf" (Distributed
 #'                   Random Forest) and "gbm" (Gradient Boosting Machine).
 #'                   The input is case-insensitive.
 #' @param sort_by    Character string specifying the metric used to rank
-#'                   models. For metrics not in \code{"logloss",
-#'                   "mean_per_class_error", "rmse", "mse"}, lower values
-#'                   indicate better performance; for these four metrics,
-#'                   higher values are preferred.
+#'                   models.
 #' @param x          Vector of predictor column names or indices.
 #' @param y          Character string specifying the response column.
 #' @param training_frame  An H2OFrame containing the training data.
@@ -54,7 +51,7 @@
 #'
 #' @return A list with the following components:
 #'   \describe{
-#'     \item{grid_search}{The H2OAutoML object returned by random search}
+#'     \item{grid}{The H2OAutoML object returned by random search}
 #'     \item{leaderboard}{A merged data frame that combines leaderboard
 #'          performance metrics with hyperparameter settings for each model.
 #'          The data frame is sorted based on the specified ranking metric.}
@@ -67,6 +64,7 @@
 #'          top 5 models.}
 #'     \item{hyperparameters_top10}{A list of hyperparameter settings from the
 #'          top 10 models.}
+#'     \item{hyperparameters_all}{A list of all hyperparameter settings.}
 #'   }
 #'
 #' @details
