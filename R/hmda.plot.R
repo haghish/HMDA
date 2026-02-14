@@ -1,6 +1,7 @@
 #' @title Plot WMSHAP contributions
 #' @description This function applies different criteria to visualize WMSHAP contributions
-#' @param shapley object of class 'shapley', as returned by the 'shapley' function
+#' @param wmshap object of class 'shapley', as returned by the 'shapley' function
+#'               or hmda.wmshap function
 #' @param plot character, specifying the type of the plot, which can be either
 #'            'bar', 'waffle', or 'shap'. The default is 'bar'.
 #' @param method Character. The column name in \code{summaryShaps} used
@@ -76,7 +77,6 @@
 #' #######################################################
 #'
 #' shapley.plot(result, plot = "bar")
-# shapley.plot(result, plot = "waffle")
 #' }
 #' @export
 
