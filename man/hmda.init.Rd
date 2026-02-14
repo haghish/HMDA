@@ -2,8 +2,7 @@
 % Please edit documentation in R/hmda.init.R
 \name{hmda.init}
 \alias{hmda.init}
-\title{Initialize or Restart H2O Cluster for HMDA
-       Analysis}
+\title{Initialize or Restart H2O Cluster for HMDA Analysis}
 \usage{
 hmda.init(
   cpu = -1,
@@ -51,8 +50,8 @@ cluster to the local machine. Default is FALSE.}
 \item{...}{Additional arguments passed to h2o.init().}
 }
 \value{
-An object representing the connection to the H2O
-        cluster.
+An \code{H2OConnection} object (invisibly printed by H2O) if \code{shutdown = FALSE};
+  otherwise returns \code{NULL}.
 }
 \description{
 Initializes or restarts an H2O cluster configured for
@@ -74,7 +73,7 @@ The function sets JAVA_HOME if a Java path is provided.
 \examples{
 \dontrun{
   # Example 1: Initialize the H2O cluster with default settings.
-  library(hmda)
+  library(HMDA)
   hmda.init()
 
   # Example 2: Initialize with specific settings such as Java path.
