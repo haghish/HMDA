@@ -125,7 +125,7 @@ hmda.grid.analysis <- function(grid,
         if (j == "mean_per_class_error") try(performance[i, j] <- PERF@metrics$mean_per_class_error, silent = TRUE)
         else if (j == "f2") try(performance[i, j] <- PERF@metrics$max_criteria_and_metric_scores[2,3], silent = TRUE)
         else if (j == "mcc") try(performance[i, j] <- PERF@metrics$max_criteria_and_metric_scores[8,3], silent = TRUE)
-        else if (j == "kappa") try(performance[i, j] <- h2otools::kappa(PER, max=TRUE), silent = TRUE)
+        else if (j == "kappa") try(performance[i, j] <- h2otools::kappa(PERF, max=TRUE), silent = TRUE)
       }
     }
   }
@@ -138,8 +138,4 @@ hmda.grid.analysis <- function(grid,
   return(performance)
 }
 
-# a <- hmda.grid.analysis(grid = grid, performance_metrics = c("logloss","auc","aucpr"), sort_by = "logloss")
-#
-# MODEL <- h2o.getModel(performance$model_ids[1])
-#
-# h2o.metric(object = perf)
+
