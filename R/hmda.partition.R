@@ -6,15 +6,14 @@
 #'   random split is performed. The proportions must sum to 1.
 #'
 #' @param df         A data frame to partition.
-#' @param y          A string with the name of the outcome column.
-#'                 Must match a column in \code{df}.
+#' @param y Optional character string naming the outcome column in \code{df}. If provided and
+#'   \code{df[[y]]} is factor/character, a stratified split is used.
 #' @param train      A numeric value for the proportion of the
 #'                 training set.
 #' @param test       A numeric value for the proportion of the
 #'                 testing set.
-#' @param validation Optional numeric value for the proportion of
-#'                 the validation set. Default is \code{NULL}. If
-#'                 specified, train + test + validation must equal 1.
+#' @param validation Optional numeric. Proportion of observations assigned to the validation set.
+#'   Default is \code{NULL}. If specified, \code{train + test + validation} must equal 1.
 #' @param seed       A numeric seed for reproducibility.
 #'                 Default is 2025.
 #'
@@ -129,7 +128,7 @@ hmda.partition <- function(df,
   hmda.train <- df[splits[[1]], , drop = FALSE]
   hmda.test  <- df[splits[[2]], , drop = FALSE]
   hmda.train.hex <- h2o::as.h2o(hmda.train, destination_frame = "hmda.train.hex")
-  hmda.test.hex <- h2o::as.h2o(hmda.train, destination_frame = "hmda.test.hex")
+  hmda.test.hex <- h2o::as.h2o(hmda.test, destination_frame = "hmda.test.hex")
 
   # Create the outputs
   if (!is.null(validation)) {
