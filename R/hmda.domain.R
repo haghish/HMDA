@@ -7,8 +7,7 @@
 #' confidence intervals.
 #'
 #' @param wmshap object of class 'shapley', as returned by the 'shapley' function
-#' @param plot character, specifying the type of the plot, which can be either
-#'            'bar' or 'wmshap'. The default is 'bar'.
+#' @param plot Logical. If \code{TRUE}, a bar plot of domain WMSHAP contributions is created.
 #' @param colorcode Character vector for specifying the color names for each domain in the plot.
 #' @param domains character list, specifying the domains for grouping the features'
 #'                contributions. Domains are clusters of features' names, that
@@ -82,7 +81,7 @@
 #'                  Group3 = c("x28", "x26"))
 #'
 #'   hmda.domain(wmshap = wmshap,
-#'               plot = "bar",
+#'               plot = TRUE,
 #'               domains = domains,
 #'               print = TRUE)
 #' }
@@ -92,7 +91,7 @@
 
 hmda.domain <- function(wmshap,
                         domains,
-                        plot = "bar",
+                        plot = TRUE,
                         # COLORCODE IS MISSING :(
                         print = FALSE,
                         colorcode = NULL,
