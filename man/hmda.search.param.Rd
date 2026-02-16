@@ -25,16 +25,13 @@ hmda.search.param(
 )
 }
 \arguments{
-\item{algorithm}{Character vector. The algorithm to include in the
+\item{algorithm}{Character. The algorithm to include in the
 random search. Supported values include "drf" (Distributed
 Random Forest) and "gbm" (Gradient Boosting Machine).
 The input is case-insensitive.}
 
 \item{sort_by}{Character string specifying the metric used to rank
-models. For metrics not in \code{"logloss",
-"mean_per_class_error", "rmse", "mse"}, lower values
-indicate better performance; for these four metrics,
-higher values are preferred.}
+models.}
 
 \item{x}{Vector of predictor column names or indices.}
 
@@ -81,7 +78,7 @@ Default is \code{NULL}.}
 \value{
 A list with the following components:
   \describe{
-    \item{grid_search}{The H2OAutoML object returned by random search}
+    \item{grid}{The H2OAutoML object returned by random search}
     \item{leaderboard}{A merged data frame that combines leaderboard
          performance metrics with hyperparameter settings for each model.
          The data frame is sorted based on the specified ranking metric.}
@@ -94,6 +91,7 @@ A list with the following components:
          top 5 models.}
     \item{hyperparameters_top10}{A list of hyperparameter settings from the
          top 10 models.}
+    \item{hyperparameters_all}{A list of all hyperparameter settings.}
   }
 }
 \description{
