@@ -15,7 +15,8 @@
 #' @param x          Vector. Predictor column names or indices.
 #' @param y          Character. The response column name or index.
 #' @param training_frame An H2OFrame containing the training data.
-#'                   Default is \code{h2o.getFrame("hmda.train.hex")}.
+#'                   Default is \code{h2o.getFrame("hmda.train.hex")},
+#'                   as defined by \code{hmda.partition} function.
 #' @param validation_frame An H2OFrame for early stopping. Default is \code{NULL}.
 #' @param hyper_params List. A list of hyperparameter vectors for tuning.
 #'                     If you do not have a clue about how to specify the
@@ -95,7 +96,7 @@
 #'   hmda.best.models(grid_performance, n_models = 2)
 #' }
 #'
-#' @importFrom h2o h2o.grid h2o.saveGrid
+#' @importFrom h2o h2o.grid h2o.saveGrid h2o.getFrame
 #' @export
 #' @author E. F. Haghish
 
@@ -128,14 +129,18 @@ hmda.grid <- function(algorithm = c("drf",  "gbm"),
   if (length(algorithm) > 1) stop("only one algorithm is supported at the time")
   algorithm <- match.arg(algorithm) # Match argument for safety
 
-  if (!inherits(training_frame, "H2OFrame")) {
-    if (inherits(training_frame, "character")) {
-      training_frame <- h2o.getFrame("hmda.train.hex")
-    }
-    else {
-      stop("the 'training_frame' argument is not referenced to an existing H2O frame")
+  if (!is.null(training_frame)) {
+    if (!inherits(training_frame, "H2OFrame")) {
+      if (inherits(training_frame, "character")) {
+        training_frame <- h2o.getFrame("hmda.train.hex")
+        message("hmda.train.hex object was automatically selected as training frame")
+      }
+      else {
+        stop("the 'training_frame' argument is not referenced to an existing H2O frame")
+      }
     }
   }
+  else stop("the 'training_frame' argument is required")
 
   # check and generate grid_id
   if (is.null(grid_id)) {
