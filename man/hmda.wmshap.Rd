@@ -12,7 +12,7 @@ hmda.wmshap(
   standardize_performance_metric = FALSE,
   performance_type = "xval",
   minimum_performance = 0,
-  method = c("mean"),
+  method = "lowerCI",
   cutoff = 0.01,
   top_n_features = NULL,
   n_models = 10,
@@ -47,10 +47,10 @@ the weighted SHAP calculation. Default is \code{0}.}
 
 \item{method}{Character. Specify the method for selecting important features
 based on their weighted mean SHAP ratios. The default is
-\code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
-exceeds the \code{cutoff}. The alternative is
 \code{"lowerCI"}, which selects features whose lower bound of confidence
-interval exceeds the \code{cutoff}.}
+interval exceeds the \code{cutoff}. The alternative is
+\code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
+exceeds the \code{cutoff}.}
 
 \item{cutoff}{Numeric. The cutoff value used in the feature selection method
 (default is \code{0.01}).}
@@ -70,17 +70,15 @@ evaluation. By default, all rows of \code{newdata} are used.}
 \value{
 A list with the following components:
   \describe{
+    A shapley object that includes the following compnents
     \item{plot}{A ggplot2 object showing the weighted mean SHAP values and
           confidence intervals (if \code{plot = TRUE}).}
-    \item{shap_values}{A data frame of the weighted mean SHAP values and confidence
+    \item{shap_values}{A data frame of the weighted mean SHAP (WMSHAP) values and confidence
           intervals for each feature.}
     \item{performance}{A data frame of performance metrics for all models used
           in the analysis.}
     \item{model_ids}{A vector of model IDs corresponding to the models evaluated.}
   }
-
-a list including the GGPLOT2 object, the data frame of SHAP values,
-        and performance metric of all models, as well as the model IDs.
 }
 \description{
 This function is a wrapper for shapley package that computes the
