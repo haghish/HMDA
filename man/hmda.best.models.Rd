@@ -25,10 +25,10 @@ defaults to 1.}
 \item{distance_percentage}{Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
 a given percentage distance of the best value for each metric (direction-aware). You must specify either
 \code{n_models} or \code{distance_percentage}, not both. distance_percentage is direction-aware.
-For example, when metric is AUC, if the distance_percentage is set to 1%, it selects models that
-have AUC equal or lower than 99% of the model with the highest AUC. If a metric is
+For example, when metric is AUC, if the distance_percentage is set to 1\%, it selects models that
+have AUC equal or lower than 99\% of the model with the highest AUC. If a metric is
 specified that lower values mean better performance, such as logloss, then
-a distance_percentage of 1% selects models that have a logloss within 1% higher than
+a distance_percentage of 1\% selects models that have a logloss within 1\% higher than
 the model with the lowest logloss.}
 
 \item{metrics}{Character vector of performance metric column names to consider. Supported metrics
@@ -98,8 +98,8 @@ The function uses a predefined set of H2O performance metrics along with
   # Return the best 2 models according to each metric
   hmda.best.models(grid_performance, n_models = 2)
 
-  # return all models with performance metric as high as 98\% of the best model, for each metric
-  # i.e., the distance of the selected models should be up to 2\% from the
+  # return all models with performance metric as high as 98\\% of the best model, for each metric
+  # i.e., the distance of the selected models should be up to 2\\% from the
   # best model in each metric
   hmda.best.models(grid_performance, distance_percentage = 0.02)
 }
