@@ -7,7 +7,7 @@
 #'
 .onAttach <- function(lib, pkg) {
   packageStartupMessage(
-    'Holistic Multimodel Domain Analysis (HMDA)\n
+    'Holistic Multimodel Domain Analysis (HMDA) for Exploratory Machine Learning\n
    \nNote1: This is a free software and comes with no guarantee.
    \nNote2: Currently the random forest and gradient boosting algorithms\n       are supported
    \nNote3: To improve HMDA, please share your thoughts and comments\n       https://github.com/haghish/HMDA/discussions \n       haghish@uib.no
