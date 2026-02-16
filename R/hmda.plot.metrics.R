@@ -58,7 +58,7 @@
 #' }
 #'
 #' @importFrom reshape2 melt
-#' @importFrom ggplot2 scale_y_continuous ggtitle theme_classic labs theme
+#' @importFrom ggplot2 ggplot aes scale_y_continuous ggtitle theme_classic labs theme
 #'             element_text margin scale_color_brewer geom_line geom_point
 #'             scale_x_continuous geom_vline
 #' @export
