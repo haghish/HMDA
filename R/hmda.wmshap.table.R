@@ -93,7 +93,6 @@
 #'   wmshap <- hmda.wmshap(models = hmda_grid1,
 #'                         newdata = test,
 #'                         performance_metric = "aucpr",
-#'                         standardize_performance_metric = FALSE,
 #'                         performance_type = "xval",
 #'                         minimum_performance = 0,
 #'                         method = "mean",

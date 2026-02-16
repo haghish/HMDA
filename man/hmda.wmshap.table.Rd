@@ -119,7 +119,6 @@ Generates a summary table of weighted mean SHAP (WMSHAP) values
   wmshap <- hmda.wmshap(models = hmda_grid1,
                         newdata = test,
                         performance_metric = "aucpr",
-                        standardize_performance_metric = FALSE,
                         performance_type = "xval",
                         minimum_performance = 0,
                         method = "mean",
