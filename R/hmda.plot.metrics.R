@@ -2,7 +2,7 @@
 #'
 #' @description
 #' Creates a line plot comparing multiple (maximize-type) performance metrics across a set of models.
-#' The input data frame is typically the output of \code{hmda.grid.analysis()} and must contain
+#' The input data frame is typically the output of \code{hmda.grid.analysis} and must contain
 #' a \code{model_ids} column and one or more numeric metric columns (e.g., \code{aucpr}, \code{mcc}, \code{f2}).
 #'
 #' The function can either plot the first \code{n_models} rows (\code{criteria = "n_models"})
@@ -17,8 +17,8 @@
 #' @param distance_percentage Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
 #'   a given percentage distance of the best value for each metric (direction-aware). You must specify either
 #'   \code{n_models} or \code{distance_percentage}, not both. distance_percentage is direction-aware.
-#'   For example, when metric is AUC, if the distance_percentage is set to 1%, it selects models that
-#'   have AUC equal or lower than 99% of the model with the highest AUC.
+#'   For example, when metric is AUC, if the distance_percentage is set to 1\%, it selects models that
+#'   have AUC equal or lower than 99\% of the model with the highest AUC.
 #' @param plot Logical. If \code{TRUE}, prints the plot.
 #' @param title Character. Add title to the plot.
 #'
@@ -51,7 +51,7 @@
 #'   # Assess the performances of the models
 #'   grid_performance <- hmda.grid.analysis(grid)
 #'
-#'   # plot the metrics of models that are within 95% of the best models
+#'   # plot the metrics of models that are within 95\% of the best models
 #'   # for each of the specified metrics
 #'   hmda.plot.metrics(grid_performance,
 #'                     criteria = "distance_percentage",
@@ -61,9 +61,8 @@
 #' }
 #'
 #' @importFrom reshape2 melt
-#' @importFrom ggplot2 ggplot aes scale_y_continuous ggtitle theme_classic labs theme
-#'             element_text margin scale_color_brewer geom_line geom_point
-#'             scale_x_continuous geom_vline
+#' @importFrom ggplot2 ggplot aes scale_y_continuous ggtitle theme_classic labs theme element_text margin scale_color_brewer geom_line geom_point scale_x_continuous geom_vline
+
 #' @export
 #' @author E. F. Haghish
 
