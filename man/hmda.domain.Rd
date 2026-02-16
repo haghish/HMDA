@@ -7,7 +7,7 @@
 hmda.domain(
   wmshap,
   domains,
-  plot = "bar",
+  plot = TRUE,
   print = FALSE,
   colorcode = NULL,
   xlab = "Factors"
@@ -24,8 +24,7 @@ better understand how a cluster of features influence the
 outcome. Note that either of 'features' or 'domains' arguments
 can be specified at the time.}
 
-\item{plot}{character, specifying the type of the plot, which can be either
-'bar' or 'wmshap'. The default is 'bar'.}
+\item{plot}{Logical. If \code{TRUE}, a bar plot of domain WMSHAP contributions is created.}
 
 \item{print}{logical. if TRUE, the WMSHAP summary table for the given row is printed}
 
@@ -102,7 +101,7 @@ confidence intervals.
                  Group3 = c("x28", "x26"))
 
   hmda.domain(wmshap = wmshap,
-              plot = "bar",
+              plot = TRUE,
               domains = domains,
               print = TRUE)
 }
