@@ -11,11 +11,17 @@
 #' @param n_models   Integer. The number of top models to select per metric.
 #'                   If both \code{n_models} and \code{distance_percentage} are \code{NULL},
 #'                   defaults to 1.
-#' @param metrics Character vector of performance metric column names to consider. Only metrics present
-#'   in \code{df} are used.
+#' @param metrics Character vector of performance metric column names to consider. Supported metrics
+#'   are "logloss", "mae", "mse", "rmse", "rmsle", "mean_per_class_error", "auc", "aucpr",
+#'   "r2", "accuracy", "f1", "mcc", "f2".
 #' @param distance_percentage Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
-#'   a given percentage of the best value for each metric (direction-aware). You must specify either
-#'   \code{n_models} or \code{distance_percentage}, not both.
+#'   a given percentage distance of the best value for each metric (direction-aware). You must specify either
+#'   \code{n_models} or \code{distance_percentage}, not both. distance_percentage is direction-aware.
+#'   For example, when metric is AUC, if the distance_percentage is set to 1%, it selects models that
+#'   have AUC equal or lower than 99% of the model with the highest AUC. If a metric is
+#'   specified that lower values mean better performance, such as logloss, then
+#'   a distance_percentage of 1% selects models that have a logloss within 1% higher than
+#'   the model with the lowest logloss.
 #' @param hyperparam Logical. If \code{TRUE}, returns all columns for the selected models (including
 #'   hyperparameters). If \code{FALSE}, returns only \code{model_ids} plus the selected metric columns.
 #'
@@ -36,38 +42,48 @@
 #'
 #' @examples
 #' \dontrun{
-#'   # Example: Create a hyperparameter grid for GBM models.
-#'   predictors <- c("var1", "var2", "var3")
-#'   response <- "target"
+#'   library(HMDA)
+#'   library(h2o)
+#'   hmda.init()
 #'
-#'   # Define hyperparameter ranges
-#'   hyper_params <- list(
-#'     ntrees = seq(50, 150, by = 25),
-#'     max_depth = c(5, 10, 15),
-#'     learn_rate = c(0.01, 0.05, 0.1),
-#'     sample_rate = c(0.8, 1.0),
-#'     col_sample_rate = c(0.8, 1.0)
+#'   # Import a sample binary outcome dataset into H2O
+#'   train <- h2o.importFile(
+#'   "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_train_10k.csv")
+#'   test <- h2o.importFile(
+#'   "https://s3.amazonaws.com/h2o-public-test-data/smalldata/higgs/higgs_test_5k.csv")
+#'
+#'   # Identify predictors and response
+#'   y <- "response"
+#'   x <- setdiff(names(train), y)
+#'
+#'   # For binary classification, response should be a factor
+#'   train[, y] <- as.factor(train[, y])
+#'   test[, y] <- as.factor(test[, y])
+#'
+#'   params <- list(learn_rate = c(0.01, 0.1),
+#'                  max_depth = c(3, 5, 9),
+#'                  sample_rate = c(0.8, 1.0)
 #'   )
 #'
-#'   # Run the grid search
-#'   grid <- hmda.grid(
-#'     algorithm = "gbm",
-#'     x = predictors,
-#'     y = response,
-#'     training_frame = h2o.getFrame("hmda.train.hex"),
-#'     hyper_params = hyper_params,
-#'     nfolds = 10,
-#'     stopping_metric = "AUTO"
-#'   )
+#'   # Train and validate a cartesian grid of GBMs
+#'   hmda_grid1 <- hmda.grid(algorithm = "gbm", x = x, y = y,
+#'                           grid_id = "hmda_grid1",
+#'                           training_frame = train,
+#'                           nfolds = 10,
+#'                           ntrees = 100,
+#'                           seed = 1,
+#'                           hyper_params = params)
 #'
 #'   # Assess the performances of the models
-#'   grid_performance <- hmda.grid.analysis(grid)
+#'   grid_performance <- hmda.grid.analysis(hmda_grid1)
 #'
 #'   # Return the best 2 models according to each metric
 #'   hmda.best.models(grid_performance, n_models = 2)
 #'
 #'   # return all models with performance metric as high as 98% of the best model, for each metric
-#'   hmda.best.models(grid_performance, distance_percentage = 0.98)
+#'   # i.e., the distance of the selected models should be up to 2% from the
+#'   # best model in each metric
+#'   hmda.best.models(grid_performance, distance_percentage = 0.02)
 #' }
 #'
 #' @importFrom utils head
@@ -164,7 +180,7 @@ hmda.best.models <- function(df,
       else if (!is.null(distance_percentage)) {
         if (dir == "maximize") {
           best_value <- max(df[[met]], na.rm = TRUE)
-          best_model_ids <- c(best_model_ids, df$model_ids[which(df[[met]] >= best_value * distance_percentage)])
+          best_model_ids <- c(best_model_ids, df$model_ids[which(df[[met]] >= best_value * (1-distance_percentage))])
         }
         else {
           best_value <- min(df[[met]], na.rm = TRUE)
