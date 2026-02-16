@@ -9,14 +9,14 @@
 #'   dictionary. The output is returned as a markdown table using the \pkg{pander}
 #'   package, or as a data frame if requested.
 #'
-#' @param wmshap             A wmshap object, returned by the hmda.wmshap function
-#'                           containing a data frame \code{summaryShaps}.
-#' @param method Character. Specify the method for selecting important features
+#' @param wmshap A wmshap object, returned by the hmda.wmshap function
+#'               containing a data frame \code{summaryShaps}.
+#' @param method #' @param method Character. Specify the method for selecting important features
 #'               based on their weighted mean SHAP ratios. The default is
-#'               \code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
-#'               exceeds the \code{cutoff}. The alternative is
 #'               \code{"lowerCI"}, which selects features whose lower bound of confidence
-#'               interval exceeds the \code{cutoff}.
+#'               interval exceeds the \code{cutoff}. The alternative is
+#'               \code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
+#'               exceeds the \code{cutoff}.
 #' @param cutoff             Numeric. The threshold cutoff for the selection method;
 #'                           only features with a value in the \code{method} column
 #'                           greater than or equal to this value are retained.
@@ -29,7 +29,10 @@
 #' @param dict               A data frame containing at least two columns named
 #'                           \code{"name"} and \code{"description"}. If provided, the
 #'                           function uses this dictionary to add human-readable feature
-#'                           descriptions. Default is \code{NULL}.
+#'                           descriptions. Default is \code{NULL}. If you define
+#'                           \code{"label"} attribute for each feature in the dataset,
+#'                           the \code{dictionary} function can be used to extract these
+#'                           attributes into a dataset.
 #' @param markdown.table     Logical. If \code{TRUE}, the output is formatted as a
 #'                           markdown table using the \pkg{pander} package; otherwise, a
 #'                           data frame is returned. Default is \code{TRUE}.
@@ -42,24 +45,7 @@
 #'         showing two columns: \code{"Description"} and \code{"WMSHAP"}. If
 #'         \code{markdown.table = FALSE}, returns a data frame with these columns.
 #'
-#  @details
-#    The function works as follows:
-#    \enumerate{
-#      \item Filters the \code{summaryShaps} data frame from the \code{wmshap}
-#            object to retain only those features for which the value in the
-#            \code{method} column is greater than or equal to the \code{cutoff}.
-#      \item Excludes any features specified in \code{exclude_features}.
-#      \item Sorts the filtered data frame in descending order by the \code{mean}
-#            SHAP value.
-#      \item Rounds the \code{mean}, \code{lowerCI}, and \code{upperCI} columns to
-#            the specified number of decimal places.
-#      \item Constructs a new \code{WMSHAP} column by concatenating the mean value
-#            with its confidence interval.
-#      \item Adds a \code{Description} column using the provided \code{dict} if available;
-#            otherwise, uses the feature name.
-#      \item Returns the final table either as a markdown table (via \pkg{pander}) or
-#            as a data frame.
-#    }
+#' @seealso \code{\link{dictionary}}
 #'
 #' @examples
 #' \dontrun{
@@ -93,19 +79,17 @@
 #'                           nfolds = 10,
 #'                           ntrees = 100,
 #'                           seed = 1,
-#'                           hyper_params = gbm_params1)
+#'                           hyper_params = params)
 #'
 #'   # Assess the performances of the models
 #'   grid_performance <- hmda.grid.analysis(hmda_grid1)
 #'
-#'   # Return the best 2 models according to each metric
-#'   hmda.best.models(grid_performance, n_models = 2)
+#'   # Return the best 10 models according to each metric
+#'   hmda.best.models(grid_performance, n_models = 10)
 #'
-#'   # build an autoEnsemble model & test it with the testing dataset
-#'   meta <- hmda.autoEnsemble(models = hmda_grid1, training_frame = train)
-#'   print(h2o.performance(model = meta$model, newdata = test))
 #'
-#'   # compute weighted mean shap values
+#'   # compute weighted mean shap values for all models
+#'   #Note: you may compute WMSHAP for a selected well-performing models
 #'   wmshap <- hmda.wmshap(models = hmda_grid1,
 #'                         newdata = test,
 #'                         performance_metric = "aucpr",
@@ -126,34 +110,34 @@
 #'   print(wmshap$plot)
 #'
 #'   # get the wmshap table output in Markdown format:
-#'   md_table <- shapley.table(wmshap = wmshap,
-#'                             method = "mean",
-#'                             cutoff = 0.01,
-#'                             round = 3,
-#'                             markdown.table = TRUE)
+#'   md_table <- hmda.wmshap.table(wmshap = wmshap,
+#'                                 method = "mean",
+#'                                 cutoff = 0.01,
+#'                                 round = 3,
+#'                                 markdown.table = TRUE)
 #'   head(md_table)
 #' }
-#'
+#' @importFrom shapley shapley.table
 #' @export
 #' @author E. F. Haghish
 
 hmda.wmshap.table <- function(wmshap,
-                          method = c("mean"),
+                          method = "lowerCI",
                           cutoff = 0.01,
                           round = 3,
                           exclude_features = NULL,
-                          dict = dictionary(raw, attribute = "label"),
+                          dict = NULL,
                           markdown.table = TRUE,
                           split.tables = 120,
                           split.cells = 50) {
 
-  return(shapley::shapley.table(shapley = wmshap,
-                         method = method,
-                         cutoff = cutoff,
-                         round = round,
-                         exclude_features = exclude_features,
-                         dict = dict,
-                         markdown.table = markdown.table,
-                         split.tables = split.tables,
-                         split.cells = split.cells))
+  shapley.table(shapley = wmshap,
+                method = method,
+                cutoff = cutoff,
+                round = round,
+                exclude_features = exclude_features,
+                dict = dict,
+                markdown.table = markdown.table,
+                split.tables = split.tables,
+                split.cells = split.cells)
 }
