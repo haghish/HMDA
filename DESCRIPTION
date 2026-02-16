@@ -19,10 +19,12 @@ Imports:
   splitTools (>= 1.0.1),
   psych (>= 2.4.6),
   dplyr (>= 1.1.4),
-  ggplot2 (>= 3.4.2)
+  ggplot2 (>= 3.4.2),
+  gridExtra (>= 2.3),
+  reshape2 (>= 1.4.5)
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 LazyData: true
 URL: http://dx.doi.org/10.13140/RG.2.2.32473.63846, https://github.com/haghish/HMDA
 BugReports: https://github.com/haghish/HMDA/issues
