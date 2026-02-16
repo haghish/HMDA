@@ -1,13 +1,12 @@
 #' @title Compute Weighted Mean SHAP Values and Confidence Intervals via shapley algorithm
-#' @description This function is a wrapper for shapley package that computes the
-#'   Weighted Mean SHAP (WMSHAP) values and corresponding confidence intervals for a
-#'   grid of models (or an ensemble of base-learners) by calling the
-#'   \code{shapley()} function. It uses the specified performance metric to assess the
-#'   models' performances and use the metric as a weight
-#'   and returns both the weighted mean SHAP values and, if requested, a plot of these
-#'   values with confidence intervals. This approach considers the variability of feature
-#'   importance across multiple models rather than reporting SHAP values from a single model.
-#'   for more details about shapley algotithm, see \url{https://github.com/haghish/shapley}
+#' @description
+#' Wrapper for \code{\link[shapley]{shapley}} that computes weighted mean SHAP ratios (WMSHAP)
+#' and (when available) confidence intervals across a set of H2O models. Model contributions
+#' are aggregated across multiple models and weighted by a chosen performance metric (e.g.,
+#' \code{"r2"} for regression; \code{"auc"}, \code{"aucpr"}, or \code{"f2"} for classification).
+#' This approach considers the variability of feature
+#' importance across multiple models rather than reporting SHAP values from a single model.
+#' For more details about shapley algotithm, see \url{https://github.com/haghish/shapley}
 #'
 #'
 #' @param models A grid object, an AutoML grid, an autoEnsemble object, or a character
@@ -163,21 +162,19 @@ hmda.wmshap <- function(models,
                         sample_size = NULL
                         #normalize_to = "upperCI"
 ) {
-  return(
-    shapley(models = models,
-            newdata = newdata,
-            #nboot = NULL,
-            plot = plot,
-            performance_metric = performance_metric,
-            standardize_performance_metric = standardize_performance_metric,
-            performance_type = performance_type,
-            minimum_performance = minimum_performance,
-            method = method,
-            cutoff = cutoff,
-            top_n_features = top_n_features,
-            n_models = n_models,
-            sample_size = sample_size
-            #normalize_to = "upperCI"
-            )
+  shapley(models = models,
+          newdata = newdata,
+          #nboot = NULL,
+          plot = plot,
+          performance_metric = performance_metric,
+          standardize_performance_metric = standardize_performance_metric,
+          performance_type = performance_type,
+          minimum_performance = minimum_performance,
+          method = method,
+          cutoff = cutoff,
+          top_n_features = top_n_features,
+          n_models = n_models,
+          sample_size = sample_size
+          #normalize_to = "upperCI"
   )
 }
