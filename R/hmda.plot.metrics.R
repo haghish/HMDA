@@ -5,17 +5,20 @@
 #' The input data frame is typically the output of \code{hmda.grid.analysis()} and must contain
 #' a \code{model_ids} column and one or more numeric metric columns (e.g., \code{aucpr}, \code{mcc}, \code{f2}).
 #'
-#' The function can either plot the first \code{top_models} rows (\code{criteria = "top_models"})
+#' The function can either plot the first \code{n_models} rows (\code{criteria = "n_models"})
 #' or include all models that achieve at least \code{distance_percentage} times the best value
 #' for at least one metric (\code{criteria = "distance_percentage"}).
 #'
 #' @param df A data frame of class \code{"hmda.grid.analysis"} containing a column \code{model_ids}
 #'   and numeric metric columns.
 #' @param metrics Character vector of column names in \code{df} to be plotted.
-#' @param criteria Character. One of \code{"top_models"} or \code{"distance_percentage"} (default).
-#' @param top_models Integer. Number of top rows to plot when \code{criteria = "top_models"}.
-#' @param distance_percentage Numeric in (0, 1]. When \code{criteria = "distance_percentage"},
-#'   includes models with metric values \eqn{\ge} best(metric) * distance_percentage for at least one metric.
+#' @param criteria Character. One of \code{"n_models"} or \code{"distance_percentage"} (default).
+#' @param n_models Integer. Number of top rows to plot when \code{criteria = "n_models"}.
+#' @param distance_percentage Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
+#'   a given percentage distance of the best value for each metric (direction-aware). You must specify either
+#'   \code{n_models} or \code{distance_percentage}, not both. distance_percentage is direction-aware.
+#'   For example, when metric is AUC, if the distance_percentage is set to 1%, it selects models that
+#'   have AUC equal or lower than 99% of the model with the highest AUC.
 #' @param plot Logical. If \code{TRUE}, prints the plot.
 #' @param title Character. Add title to the plot.
 #'
@@ -68,8 +71,8 @@
 hmda.plot.metrics <- function(df,
                               metrics = c("auc", "aucpr", "r2", "mcc", "f2"),
                               criteria = "distance_percentage",
-                              top_models = 100,
-                              distance_percentage = 0.95,
+                              n_models = 100,
+                              distance_percentage = 0.05,
                               plot = TRUE,
                               title = NULL) {
 
@@ -81,15 +84,15 @@ hmda.plot.metrics <- function(df,
 
   # subset models
   # ============================================================
-  if (criteria == "top_models") {
-    df <- df[1:top_models, ]
+  if (criteria == "n_models") {
+    df <- df[1:n_models, ]
   }
   else if (criteria == "distance_percentage") {
 
     # for each metric get the best model performance
     for (met in metrics) {
       best_value <- max(df[[met]], na.rm = TRUE)
-      IDS <- c(IDS, df$model_ids[which(df[[met]] >= best_value * distance_percentage)])
+      IDS <- c(IDS, df$model_ids[which(df[[met]] >= best_value * (1-distance_percentage))])
     }
 
     IDS <- unique(IDS)
