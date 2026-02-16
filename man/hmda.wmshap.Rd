@@ -81,15 +81,13 @@ A list with the following components:
   }
 }
 \description{
-This function is a wrapper for shapley package that computes the
-  Weighted Mean SHAP (WMSHAP) values and corresponding confidence intervals for a
-  grid of models (or an ensemble of base-learners) by calling the
-  \code{shapley()} function. It uses the specified performance metric to assess the
-  models' performances and use the metric as a weight
-  and returns both the weighted mean SHAP values and, if requested, a plot of these
-  values with confidence intervals. This approach considers the variability of feature
-  importance across multiple models rather than reporting SHAP values from a single model.
-  for more details about shapley algotithm, see \url{https://github.com/haghish/shapley}
+Wrapper for \code{\link[shapley]{shapley}} that computes weighted mean SHAP ratios (WMSHAP)
+and (when available) confidence intervals across a set of H2O models. Model contributions
+are aggregated across multiple models and weighted by a chosen performance metric (e.g.,
+\code{"r2"} for regression; \code{"auc"}, \code{"aucpr"}, or \code{"f2"} for classification).
+This approach considers the variability of feature
+importance across multiple models rather than reporting SHAP values from a single model.
+For more details about shapley algotithm, see \url{https://github.com/haghish/shapley}
 }
 \details{
 This function is designed as a wrapper for the HMDA package and calls the
