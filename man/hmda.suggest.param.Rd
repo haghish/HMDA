@@ -16,7 +16,7 @@ model combinations in the grid. Must be at least 100.}
 
 \item{x}{(Optional) A vector of predictor names.
 If provided and its length is at least 20, it is used
-to compute mtries for DRF.å}
+to compute mtries for DRF.}
 
 \item{family}{(Optional) A character string indicating the
 modeling family. Must be either "classification"
@@ -30,11 +30,15 @@ A named list of hyperparameter value vectors. This list is
 \description{
 Suggests candidate hyperparameter values for tree-based
   algorithms. It computes a hyperparameter grid whose total number
-  of model combinations is near a specified target. For GBM models,
-  default candidates include max_depth, ntrees, learn_rate,
-  sample_rate, and col_sample_rate. For DRF models, if a vector of predictor
-  variables (\code{x}) and a modeling family ("regression" or "classificaiton")
-  are provided, a vector of mtries is also suggested.
+  of model combinations is near a specified target.
+
+  The function builds a default candidate
+grid for \code{"gbm"} or \code{"drf"}, and then prunes or expands the grid using
+\code{hmda.adjust.params()} so the total number of model combinations is near \code{n_models}.
+
+For GBM models, default candidates include \code{max_depth}, \code{ntrees}, \code{learn_rate},
+\code{sample_rate}, and \code{col_sample_rate}. For DRF models, if \code{x} (predictors) and
+\code{family} ("regression" or "classification") are provided, a vector of \code{mtries} is also suggested via \code{suggest_mtries()}.
 }
 \details{
 The function first checks that \code{n_models} is at least 100,
