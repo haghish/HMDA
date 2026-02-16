@@ -13,12 +13,15 @@
 #' frame for common H2O hyperparameter names, such as "ntrees",
 #' "max_depth", "min_rows", "sample_rate",
 #' "col_sample_rate_per_tree", "min_split_improvement",
-#' "learn_rate", "mtries", and "seed". It extracts the unique
+#' "learn_rate", and "mtries". It extracts the unique
 #' values from each matching column and returns them in a list.
 #' The resulting list can be used as a hyperparameter grid for
 #' tuning via H2O grid search functions.
 #'
+#' @keywords internal
+#' @noRd
 #' @author E. F. Haghish
+
 list_hyperparameter <- function(df) {
   # Define a pattern for common H2O hyperparameter names
   pattern <- "(ntrees|max_depth|min_rows|sample_rate|"
