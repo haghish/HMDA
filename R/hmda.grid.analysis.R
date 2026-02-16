@@ -34,7 +34,7 @@
 #'           initializes a column with NA values and iterates over each model in the grid
 #'           (via its \code{model_ids}) to extract the corresponding cross-validated
 #'           performance metric using functions such as \code{h2o.auc()}, \code{h2o.rmse()},
-#'           etc. For threshold-based metrics (e.g., \code{f1}, \code{f2}, \code{mcc},
+#'           etc. For threshold-based metrics (e.g., \code{f2}, \code{mcc},
 #'           \code{kappa}), it retrieves performance via \code{h2o.performance()}.
 #'     \item \strong{Return:} The function returns the merged data frame of performance metrics.
 #'   }
@@ -79,7 +79,7 @@
 #'   hmda.best.models(grid_performance, n_models = 2)
 #' }
 #'
-#' @importFrom h2o h2o.F1 h2o.F2 h2o.auc h2o.aucpr h2o.getGrid h2o.logloss h2o.mcc
+#' @importFrom h2o h2o.F2 h2o.auc h2o.aucpr h2o.getGrid h2o.logloss h2o.mcc
 #' h2o.mse h2o.performance h2o.r2 h2o.rmse
 #' @export
 #' @author E. F. Haghish
@@ -88,7 +88,7 @@ hmda.grid.analysis <- function(grid,
                                performance_metrics =
                                  c("logloss", "mse", "rmse", "rmsle", "auc",
                                    "aucpr", "mean_per_class_error", "r2",
-                                   "f1","f2","mcc","kappa"),
+                                   "f2","mcc","kappa"),
                                sort_by = "logloss") {
 
   # prepare the performance dataset
@@ -113,7 +113,7 @@ hmda.grid.analysis <- function(grid,
       if (j == "auc") try(performance[i, j] <- h2o.auc(MODEL, xval = TRUE), silent = TRUE)
       else if (j == "aucpr") try(performance[i, j] <- h2o.aucpr(MODEL, xval = TRUE), silent = TRUE)
       else if (j == "r2") try(performance[i, j] <- h2o.r2(MODEL, xval = TRUE), silent = TRUE)
-      else if (j == "loggloss") try(performance[i, j] <- h2o.logloss(MODEL, xval = TRUE), silent = TRUE)
+      else if (j == "logloss") try(performance[i, j] <- h2o.logloss(MODEL, xval = TRUE), silent = TRUE)
       #else if (j == "mae") try(performance[i, j] <- h2o.mae(MODEL, xval = TRUE), silent = TRUE)
       else if (j == "mse") try(performance[i, j] <- h2o.mse(MODEL, xval = TRUE), silent = TRUE)
       else if (j == "rmse") try(performance[i, j] <- h2o.rmse(MODEL, xval = TRUE), silent = TRUE)
