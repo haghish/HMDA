@@ -35,7 +35,8 @@ using the algorithm name and the current time.}
 \item{y}{Character. The response column name or index.}
 
 \item{training_frame}{An H2OFrame containing the training data.
-Default is \code{h2o.getFrame("hmda.train.hex")}.}
+Default is \code{h2o.getFrame("hmda.train.hex")},
+as defined by \code{hmda.partition} function.}
 
 \item{validation_frame}{An H2OFrame for early stopping. Default is \code{NULL}.}
 
