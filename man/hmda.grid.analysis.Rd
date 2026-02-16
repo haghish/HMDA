@@ -7,7 +7,7 @@
 hmda.grid.analysis(
   grid,
   performance_metrics = c("logloss", "mse", "rmse", "rmsle", "auc", "aucpr",
-    "mean_per_class_error", "r2", "f1", "f2", "mcc", "kappa"),
+    "mean_per_class_error", "r2", "f2", "mcc", "kappa"),
   sort_by = "logloss"
 )
 }
@@ -51,7 +51,7 @@ The function performs the following steps:
           initializes a column with NA values and iterates over each model in the grid
           (via its \code{model_ids}) to extract the corresponding cross-validated
           performance metric using functions such as \code{h2o.auc()}, \code{h2o.rmse()},
-          etc. For threshold-based metrics (e.g., \code{f1}, \code{f2}, \code{mcc},
+          etc. For threshold-based metrics (e.g., \code{f2}, \code{mcc},
           \code{kappa}), it retrieves performance via \code{h2o.performance()}.
     \item \strong{Return:} The function returns the merged data frame of performance metrics.
   }
