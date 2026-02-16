@@ -30,10 +30,11 @@
 #'   the weighted SHAP calculation. Default is \code{0}.
 #' @param method Character. Specify the method for selecting important features
 #'               based on their weighted mean SHAP ratios. The default is
-#'               \code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
-#'               exceeds the \code{cutoff}. The alternative is
 #'               \code{"lowerCI"}, which selects features whose lower bound of confidence
-#'               interval exceeds the \code{cutoff}.
+#'               interval exceeds the \code{cutoff}. The alternative is
+#'               \code{"mean"}, which selects features whose weighted mean shap ratio (WMSHAP)
+#'               exceeds the \code{cutoff}.
+#'
 #' @param cutoff Numeric. The cutoff value used in the feature selection method
 #'   (default is \code{0.01}).
 #' @param top_n_features Integer. If specified, only the top \code{n} features with the
@@ -48,9 +49,10 @@
 #'
 #' @return A list with the following components:
 #'   \describe{
+#'     A shapley object that includes the following compnents
 #'     \item{plot}{A ggplot2 object showing the weighted mean SHAP values and
 #'           confidence intervals (if \code{plot = TRUE}).}
-#'     \item{shap_values}{A data frame of the weighted mean SHAP values and confidence
+#'     \item{shap_values}{A data frame of the weighted mean SHAP (WMSHAP) values and confidence
 #'           intervals for each feature.}
 #'     \item{performance}{A data frame of performance metrics for all models used
 #'           in the analysis.}
@@ -76,18 +78,6 @@
 #'   }
 #'
 #' @importFrom shapley shapley
-#' @importFrom utils setTxtProgressBar txtProgressBar globalVariables
-#' @importFrom stats weighted.mean
-#' @importFrom h2o h2o.stackedEnsemble h2o.getModel h2o.auc h2o.aucpr h2o.r2
-#'             h2o.F2 h2o.mean_per_class_error h2o.giniCoef h2o.accuracy
-#'             h2o.shap_summary_plot
-# @importFrom h2otools h2o.get_ids
-#' @importFrom curl curl
-#' @importFrom ggplot2 ggplot aes geom_col geom_errorbar coord_flip ggtitle xlab
-#'             ylab theme_classic theme scale_y_continuous margin expansion
-
-#' @return a list including the GGPLOT2 object, the data frame of SHAP values,
-#'         and performance metric of all models, as well as the model IDs.
 #'
 #'
 #' @examples
@@ -166,7 +156,7 @@ hmda.wmshap <- function(models,
                         standardize_performance_metric = FALSE,
                         performance_type = "xval",
                         minimum_performance = 0,
-                        method = c("mean"),
+                        method = "lowerCI",
                         cutoff = 0.01,
                         top_n_features = NULL,
                         n_models = 10,
