@@ -83,14 +83,14 @@
 #' @export
 
 hmda.plot <- function(wmshap,
-                         plot = "bar",
-                         method = "mean",
-                         cutoff = 0.01,
-                         top_n_features = NULL,
-                         features = NULL,
-                         legendstyle = "continuous",
-                         scale_colour_gradient = NULL,
-                         labels = NULL) {
+                      plot = "bar",
+                      method = "mean",
+                      cutoff = 0.01,
+                      top_n_features = NULL,
+                      features = NULL,
+                      legendstyle = "continuous",
+                      scale_colour_gradient = NULL,
+                      labels = NULL) {
 
   shapley.plot(wmshap,
            plot = plot,
