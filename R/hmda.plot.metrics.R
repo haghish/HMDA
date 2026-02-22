@@ -6,18 +6,18 @@
 #' a \code{model_ids} column and one or more numeric metric columns (e.g., \code{aucpr}, \code{mcc}, \code{f2}).
 #'
 #' The function can either plot the first \code{n_models} rows (\code{criteria = "n_models"})
-#' or include all models that achieve at least \code{distance_percentage} times the best value
-#' for at least one metric (\code{criteria = "distance_percentage"}).
+#' or include all models that achieve at least \code{tolerance} times the best value
+#' for at least one metric (\code{criteria = "rashomon"}).
 #'
 #' @param df A data frame of class \code{"hmda.grid.analysis"} containing a column \code{model_ids}
 #'   and numeric metric columns.
 #' @param metrics Character vector of column names in \code{df} to be plotted.
-#' @param criteria Character. One of \code{"n_models"} or \code{"distance_percentage"} (default).
+#' @param criteria Character. One of \code{"n_models"} or \code{"rashomon"} (default).
 #' @param n_models Integer. Number of top rows to plot when \code{criteria = "n_models"}.
-#' @param distance_percentage Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
+#' @param tolerance Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
 #'   a given percentage distance of the best value for each metric (direction-aware). You must specify either
-#'   \code{n_models} or \code{distance_percentage}, not both. distance_percentage is direction-aware.
-#'   For example, when metric is AUC, if the distance_percentage is set to 1\%, it selects models that
+#'   \code{n_models} or \code{tolerance}, not both. tolerance is direction-aware.
+#'   For example, when metric is AUC, if the tolerance is set to 1\%, it selects models that
 #'   have AUC equal or lower than 99\% of the model with the highest AUC.
 #' @param plot Logical. If \code{TRUE}, prints the plot.
 #' @param title Character. Add title to the plot.
@@ -54,8 +54,8 @@
 #'   # plot the metrics of models that are within 95\% of the best models
 #'   # for each of the specified metrics
 #'   hmda.plot.metrics(grid_performance,
-#'                     criteria = "distance_percentage",
-#'                     distance_percentage = 0.95,
+#'                     criteria = "rashomon",
+#'                     tolerance = 0.95,
 #'                     metrics = c("auc", "aucpr", "r2", "mcc", "f2"))
 #'
 #' }
@@ -69,9 +69,9 @@
 # plot the AUCPR, MCC, and F2 values on a line with ggplot2
 hmda.plot.metrics <- function(df,
                               metrics = c("auc", "aucpr", "r2", "mcc", "f2"),
-                              criteria = "distance_percentage",
+                              criteria = "rashomon",
                               n_models = 100,
-                              distance_percentage = 0.05,
+                              tolerance = 0.05,
                               plot = TRUE,
                               title = NULL) {
 
@@ -86,12 +86,12 @@ hmda.plot.metrics <- function(df,
   if (criteria == "n_models") {
     df <- df[1:n_models, ]
   }
-  else if (criteria == "distance_percentage") {
+  else if (criteria == "rashomon") {
 
     # for each metric get the best model performance
     for (met in metrics) {
       best_value <- max(df[[met]], na.rm = TRUE)
-      IDS <- c(IDS, df$model_ids[which(df[[met]] >= best_value * (1-distance_percentage))])
+      IDS <- c(IDS, df$model_ids[which(df[[met]] >= best_value * (1-tolerance))])
     }
 
     IDS <- unique(IDS)
