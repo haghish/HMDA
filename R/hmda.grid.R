@@ -1,3 +1,5 @@
+# add balance_classes
+
 #' @title Tune a Cartesian Hyperparameter Grid in HMDA
 #' @description
 #' Runs an grid search for a single tree-based algorithm supported by HMDA
