@@ -7,9 +7,9 @@
 hmda.plot.metrics(
   df,
   metrics = c("auc", "aucpr", "r2", "mcc", "f2"),
-  criteria = "distance_percentage",
+  criteria = "rashomon",
   n_models = 100,
-  distance_percentage = 0.05,
+  tolerance = 0.05,
   plot = TRUE,
   title = NULL
 )
@@ -20,14 +20,14 @@ and numeric metric columns.}
 
 \item{metrics}{Character vector of column names in \code{df} to be plotted.}
 
-\item{criteria}{Character. One of \code{"n_models"} or \code{"distance_percentage"} (default).}
+\item{criteria}{Character. One of \code{"n_models"} or \code{"rashomon"} (default).}
 
 \item{n_models}{Integer. Number of top rows to plot when \code{criteria = "n_models"}.}
 
-\item{distance_percentage}{Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
+\item{tolerance}{Numeric in (0, 1). Alternative to \code{n_models}. Selects all models within
 a given percentage distance of the best value for each metric (direction-aware). You must specify either
-\code{n_models} or \code{distance_percentage}, not both. distance_percentage is direction-aware.
-For example, when metric is AUC, if the distance_percentage is set to 1\%, it selects models that
+\code{n_models} or \code{tolerance}, not both. tolerance is direction-aware.
+For example, when metric is AUC, if the tolerance is set to 1\%, it selects models that
 have AUC equal or lower than 99\% of the model with the highest AUC.}
 
 \item{plot}{Logical. If \code{TRUE}, prints the plot.}
@@ -40,8 +40,8 @@ The input data frame is typically the output of \code{hmda.grid.analysis} and mu
 a \code{model_ids} column and one or more numeric metric columns (e.g., \code{aucpr}, \code{mcc}, \code{f2}).
 
 The function can either plot the first \code{n_models} rows (\code{criteria = "n_models"})
-or include all models that achieve at least \code{distance_percentage} times the best value
-for at least one metric (\code{criteria = "distance_percentage"}).
+or include all models that achieve at least \code{tolerance} times the best value
+for at least one metric (\code{criteria = "rashomon"}).
 }
 \examples{
 \dontrun{
@@ -75,8 +75,8 @@ for at least one metric (\code{criteria = "distance_percentage"}).
   # plot the metrics of models that are within 95\\% of the best models
   # for each of the specified metrics
   hmda.plot.metrics(grid_performance,
-                    criteria = "distance_percentage",
-                    distance_percentage = 0.95,
+                    criteria = "rashomon",
+                    tolerance = 0.95,
                     metrics = c("auc", "aucpr", "r2", "mcc", "f2"))
 
 }
