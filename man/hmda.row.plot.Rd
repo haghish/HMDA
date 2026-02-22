@@ -4,7 +4,15 @@
 \alias{hmda.row.plot}
 \title{WMSHAP row-level plot for a single observation (participant or data row)}
 \usage{
-hmda.row.plot(wmshap, row_index, features = NULL, plot = TRUE, print = FALSE)
+hmda.row.plot(
+  wmshap,
+  row_index,
+  top_n_features = NULL,
+  features = NULL,
+  nonzeroCI = FALSE,
+  plot = TRUE,
+  print = FALSE
+)
 }
 \arguments{
 \item{wmshap}{object of class 'shapley', as returned by the 'shapley' function
@@ -13,8 +21,17 @@ or hmda.wmshap function}
 \item{row_index}{Integer (length 1). The row/subject identifier to visualize. This is
 matched against the \code{index} column in \code{shapley$results}.}
 
+\item{top_n_features}{Integer. If specified, the top n features with the
+highest weighted SHAP values will be selected. This
+will be overrulled by the 'features' argument.}
+
 \item{features}{Optional character vector of feature names to plot. If \code{NULL},
-all available features in \code{shapley$results} are used.}
+all available features in \code{shapley$results} are used.
+Specifying the \code{features} argument will override the
+\code{top_n_features} argument.}
+
+\item{nonzeroCI}{Logical. If \code{TRUE}, it avoids ploting features that have
+a confidence interval crossing zero.}
 
 \item{plot}{Logical. If \code{TRUE}, prints the plot.}
 
