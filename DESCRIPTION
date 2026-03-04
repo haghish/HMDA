@@ -13,7 +13,7 @@ Description: Holistic Multimodel Domain Analysis (HMDA) is a robust and transpar
 Imports:
   curl (>= 4.3.0),
   h2o (>= 3.34.0.0),
-  shapley (>= 0.5),
+  shapley (>= 0.7),
   autoEnsemble (>= 0.3),
   h2otools (>= 0.4), 
   splitTools (>= 1.0.1),
