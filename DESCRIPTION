@@ -1,7 +1,7 @@
 Package: HMDA
 Type: Package
 Title: Holistic Multimodel Domain Analysis for Exploratory Machine Learning
-Version: 0.3.0
+Version: 0.4.1
 Authors@R: 
     person("E. F. Haghish",
            role = c("aut", "cre", "cph"),
@@ -21,7 +21,7 @@ Imports:
   dplyr (>= 1.1.4),
   ggplot2 (>= 3.4.2),
   gridExtra (>= 2.3),
-  reshape2 (>= 1.4.5)
+  reshape2 (>= 1.4.4)
 License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.3.3
